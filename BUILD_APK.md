@@ -33,15 +33,16 @@ milik Flutter 3.50.0 sendiri. Jadi jangan pakai `stable` latest atau
 Flutter 3.32.8 dipilih karena toolchain-nya cocok persis dengan template:
 Gradle 8.12, AGP 8.7.3, dan Dart 3.8.1 yang sama dengan syarat minimum
 `pubspec.yaml`. Itu rilis stabil 25 Juli 2025, patch terakhir dari lini
-3.32. Workflow `.github/workflows/build-apk.yml` juga sudah dipin ke
-3.32.8, bukan `stable` polos.
+3.32.
 
 Catatan jujur: pin ini dipilih dari kecocokan versi di atas, **bukan dari
 hasil build APK yang sukses di mesin Muse**, karena build APK memang
 sengaja tidak dijalankan di sana (perintah user 18 Nov 2026 14:03 WIB).
 Kalau 3.32.8 ternyata kena error yang sama, laporkan log errornya, lalu
 coba cadangan **Flutter 3.35.7 (Dart 3.9.2)**, yang template-nya memakai
-Gradle 8.12 dan AGP 8.9.1. Kalau dua-duanya gagal di plugin yang sama,
+Gradle 8.12 dan AGP 8.9.1. Workflow `.github/workflows/build-apk.yml`
+saat ini dipin ke **3.35.7** (commit f1fa07e), setelah 3.32.8 juga gagal
+di Actions dengan error plugin yang sama. Kalau dua-duanya gagal di plugin yang sama,
 penyebabnya hampir pasti jaringan ke `plugins.gradle.org` di mesin itu,
 bukan kode aplikasi.
 
@@ -58,6 +59,15 @@ bukan kode aplikasi.
 4. Install Android Studio, lalu di SDK Manager install Android SDK
    Platform API 35 dan 36, dan Android SDK Build-Tools 35.0.0 dan 36.1.0.
    Atau install lewat `sdkmanager` bila sudah paham.
+   **Kalau install SDK gagal lewat proxy** (Java tidak tembus proxy,
+   seperti yang dialami 18 Nov 2026): unduh Android SDK Command Line
+   Tools langsung lewat browser dari
+   https://developer.android.com/studio#command-line-tools-only
+   (file zip `commandlinetools-win`), extract ke `C:\Android\cmdline-tools\latest`,
+   lalu dari Command Prompt jalankan:
+   `C:\Android\cmdline-tools\latest\bin\sdkmanager.bat --install "platforms;android-35" "platforms;android-36" "build-tools;35.0.0" "build-tools;36.1.0" "platform-tools"`,
+   dan set `ANDROID_HOME` ke `C:\Android`. Cara ini tidak lewat Java
+   Android Studio, jadi tidak kena blokir proxy yang sama.
 5. Install JDK 17 (Temurin) dan set `JAVA_HOME` ke folder JDK 17 itu.
 6. Jalankan `flutter doctor`, pastikan Android toolchain centang hijau.
    Chrome dan Linux toolchain tidak dibutuhkan untuk APK.
@@ -123,22 +133,24 @@ Supabase buka Authentication > Sign in / Providers > Email, lalu
 **matikan** konfirmasi email (Confirm email). Bila tetap aktif, user
 harus klik link konfirmasi di email dulu sebelum bisa login.
 
-## 6. Migrasi database yang masih harus dijalankan
+## 6. Migrasi database — sudah live, tidak perlu dijalankan lagi
 
 Migrasi utama `supabase/migrations/20261118000000_outdoorrent_postgres.sql`
-sudah live sejak 18 Nov 2026 (9 tabel, data seed terverifikasi). Dua
-migrasi susulan **belum dijalankan ke live**, jalankan berurutan di
-Supabase SQL Editor project rent-outdoor:
+sudah live sejak 18 Nov 2026 (9 tabel, data seed terverifikasi). Tiga
+migrasi susulan juga **sudah dijalankan live** dan terverifikasi:
 
-1. `20261118000001_users_insert_policy.sql`: policy INSERT `users`
-   supaya register dari APK tidak gagal RLS 403.
-2. `20261118000002_harden_rls_stock.sql`: RLS ketat pemilik/admin,
-   validasi tanggal dan stok di database, fungsi `available_stock()`,
-   dan policy storage baru. Wajib dijalankan sebelum APK dipakai ramai,
-   karena tanpa ini semua user login masih bisa membaca/mengubah
-   booking orang lain.
+1. `20261118000001_users_insert_policy.sql` — live 18 Nov 2026
+   14:27-14:37 WIB: policy INSERT `users` supaya register dari APK
+   tidak gagal RLS 403.
+2. `20261118000002_harden_rls_stock.sql` — live 18 Nov 2026
+   14:27-14:37 WIB: RLS ketat pemilik/admin, validasi tanggal dan stok
+   di database, fungsi `available_stock()`, dan policy storage baru.
+3. `20261118000003_moderator_role.sql` — live 18 Nov 2026
+   14:52-14:54 WIB: role moderator, boleh verifikasi pembayaran dan
+   ubah status booking, tidak boleh ubah peran pengguna, harga, atau stok.
 
-Verifikasi sesudah jalan:
+Jadi bagian ini sudah selesai. Kalau mau memastikan sendiri, jalankan
+di Supabase SQL Editor project rent-outdoor:
 
 ```sql
 select tablename, policyname, cmd from pg_policies
