@@ -106,6 +106,10 @@ export function HeroDepth() {
       container.appendChild(renderer.domElement);
 
       const scene = new THREE.Scene();
+      // Langit terang solid (krem #faf7f1, sama dengan --ground): zona
+      // teks dijamin berlatar terang, bukan langit transparan yang
+      // tembus ke warna apa pun di belakang canvas.
+      scene.background = new THREE.Color(0xfaf7f1);
       scene.fog = new THREE.Fog(0xfaf7f1, 22, 46);
 
       const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 120);
@@ -120,23 +124,30 @@ export function HeroDepth() {
       scene.add(world);
 
       // Lantai lembah: bidang gelap di bawah, memudar ke kabut.
+      // Dasar lembah di y = -3.0, lebih rendah dari sebelumnya (-1.4),
+      // supaya punggung gunung duduk di pita bawah zona headline dan
+      // langit terang di atasnya bebas untuk teks (perbaikan kontras
+      // 18 Nov 2026: headline hijau gelap menumpuk di atas gunung
+      // hijau gelap yang sama tingginya, jadi tidak terbaca).
       const ground = new THREE.Mesh(
         new THREE.PlaneGeometry(90, 34),
         new THREE.MeshStandardMaterial({ color: 0x0f2a1a, roughness: 1, metalness: 0 }),
       );
       ground.rotation.x = -Math.PI / 2;
-      ground.position.set(0, -1.4, -4);
+      ground.position.set(0, -3.0, -4);
       world.add(ground);
       disposables.push(ground.geometry, ground.material as THREE.Material);
 
       // Tiga lapis gunung low-poly: kerucut flat-shading yang tumpang
       // tindih membentuk punggung pegunungan. Lapis jauh lebih terang
-      // (kabut), lapis dekat paling gelap dan besar.
+      // (kabut), lapis dekat paling gelap dan besar. Puncak sengaja
+      // lebih rendah dari sebelumnya (dasar -3.0, tinggi dipangkas
+      // ~2) supaya puncak tidak masuk ke zona teks di atas.
       const rand = mulberry32(20261118);
       const layers = [
-        { z: -16, color: 0x2a7a45, count: small ? 5 : 8, hMin: 4.5, hMax: 7.5, rMin: 3.2, rMax: 5 },
-        { z: -11, color: 0x16301f, count: small ? 4 : 7, hMin: 5.5, hMax: 9, rMin: 3.8, rMax: 5.5 },
-        { z: -6, color: 0x0f2a1a, count: small ? 3 : 6, hMin: 7, hMax: 11, rMin: 4.5, rMax: 6.5 },
+        { z: -16, color: 0x2a7a45, count: small ? 5 : 8, hMin: 3.5, hMax: 5.5, rMin: 3.2, rMax: 5 },
+        { z: -11, color: 0x16301f, count: small ? 4 : 7, hMin: 4.5, hMax: 6.5, rMin: 3.8, rMax: 5.5 },
+        { z: -6, color: 0x0f2a1a, count: small ? 3 : 6, hMin: 5.5, hMax: 7.5, rMin: 4.5, rMax: 6.5 },
       ];
       for (const layer of layers) {
         for (let i = 0; i < layer.count; i++) {
@@ -154,7 +165,7 @@ export function HeroDepth() {
           const span = 36;
           cone.position.set(
             -span / 2 + (i / Math.max(1, layer.count - 1)) * span + (rand() - 0.5) * 3,
-            h / 2 - 1.4,
+            h / 2 - 3.0,
             layer.z + (rand() - 0.5) * 1.5,
           );
           cone.rotation.y = rand() * Math.PI;
@@ -227,11 +238,13 @@ export function HeroDepth() {
       function renderFrame() {
         if (!renderer) return;
         const t = clock.getElapsedTime();
-        // Drift kamera yang tenang.
+        // Drift kamera yang tenang. Gerak vertikal sengaja kecil
+        // (0.08 dan faktor pointer 0.2) supaya puncak gunung tidak
+        // naik ke zona teks saat pointer bergerak atau kamera drift.
         pointer.x += (pointer.tx - pointer.x) * 0.04;
         pointer.y += (pointer.ty - pointer.y) * 0.04;
         camera.position.x = Math.sin(t * 0.06) * 0.6 + pointer.x * 1.4;
-        camera.position.y = 2.6 + Math.sin(t * 0.045) * 0.16 - pointer.y * 0.5;
+        camera.position.y = 2.6 + Math.sin(t * 0.045) * 0.08 - pointer.y * 0.2;
         // Parallax scroll: gunung turun perlahan saat hero keluar layar.
         let progress = 0;
         if (heroEl) {

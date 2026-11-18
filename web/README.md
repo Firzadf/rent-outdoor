@@ -274,3 +274,30 @@ tidak dipakai: sistem CSS polos proyek ini sudah cukup, menambah
   berhenti saat tab tidak terlihat, tombol "Jeda animasi"
   mematikan loop, reduced motion hanya merender satu frame statis
   dan tombol jeda disembunyikan.
+- **Perbaikan kontras hero (18 Nov 2026):** gunung sudah kelihatan,
+  tapi headline hijau gelap (`#16301f`) menumpuk di atas gunung
+  hijau gelap yang sama. Rasio kontras terukur: headline di atas
+  gunung dekat (`#0f2a1a`) hanya 1,08:1, praktis tidak terbaca.
+  Perbaikan tiga lapis: langit adegan dibuat solid krem
+  (`scene.background`), dasar lembah dan puncak gunung diturunkan
+  (dasar -3,0, tinggi dipangkas ~2) supaya gunung duduk di pita
+  bawah zona headline, gerak vertikal kamera dipangkas (drift 0,08,
+  faktor pointer 0,2), dan haze diubah jadi scrim terang yang
+  menutupi zona teks (94% krem di atas, memudar ke hampir bening
+  di 74%). Kontras sesudah: headline di atas krem 13,30:1,
+  subheadline 7,12:1, headline di atas scrim 94% menutupi gunung
+  tergelap 11,40:1, semua jauh di atas standar 4,5:1. Isi teks,
+  tombol, dan alur tidak diubah.
+- **Pola judul Red Bull (18 Nov 2026):** halaman Red Bull Tenerife
+  akhirnya berhasil dibaca lewat cloud browser. Pola yang diterapkan
+  ke hero: judul sangat besar dan tebal, huruf besar semua, hampir
+  selebar layar, menyatu dengan adegan, bukan menempel di atas kotak;
+  foto hero tetap full-bleed dan jadi bintang; identitas hijau forest
+  dan oranye dipertahankan. Judul hero memakai Archivo 900 uppercase
+  (104px maks, bukan Fraunces seperti h2 section) dan berdiri di atas
+  langit terang yang kontras (13,30:1), sesuai prinsip Red Bull yang
+  menaruh judul di atas latar yang kontras dengan judulnya. Pilihan
+  judul putih di atas gunung gelap sengaja tidak dipakai: kabut di
+  adegan memudarkan gunung jauh ke warna krem, jadi judul putih akan
+  hilang di sana. Tidak ada foto, teks, judul, atau logo Red Bull
+  yang disalin.

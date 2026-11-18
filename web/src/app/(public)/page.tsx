@@ -28,13 +28,18 @@ export default async function HomePage() {
       )}
 
       {/*
-        Hero editorial (revisi 18 Nov 2026): headline display dua baris di
+        Hero editorial (revisi 18 Nov 2026): headline dua baris di
         atas field datar, foto sebagai bidang dominan di bawahnya, picker
         tanggal sebagai bar datar yang menumpang di sambungan foto dan
         ground. Tanpa panel gradien, tanpa chip kaca, tanpa headline
         kata per kata. Latar gunung 3D (HeroDepth, Three.js low-poly)
         hidup di dalam zona headline saja, bukan di seluruh hero, supaya
         tidak tertutup foto dan jelas terlihat di belakang teks.
+        Pola Red Bull (halaman Tenerife berhasil dibaca 18 Nov 2026):
+        judul sangat besar dan tebal, huruf besar semua, hampir
+        selebar layar, menyatu dengan adegan gunung; judul memakai
+        Archivo 900 uppercase dan berdiri di atas langit terang yang
+        kontras. Foto hero tetap full-bleed dan jadi bintang.
         Nuansa editorial petualangan: foto imersif, tipografi besar dan
         berani, adegan alam yang terasa nyata.
       */}
