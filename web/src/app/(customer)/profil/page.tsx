@@ -63,7 +63,8 @@ export default function ProfilePage() {
     <div className="wrap narrow">
       <h1>Profil.</h1>
       <p>
-        {user.email} · Peran: {appUser?.role === "admin" ? "Admin" : "Customer"}
+        {user.email} · Peran:{" "}
+        {appUser?.role === "admin" ? "Admin" : appUser?.role === "moderator" ? "Moderator" : "Customer"}
       </p>
       {!appUser && (
         <p className="form-error">

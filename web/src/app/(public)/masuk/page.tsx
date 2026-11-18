@@ -23,15 +23,18 @@ export default function LoginPage() {
       setError(result.error);
       return;
     }
-    router.push("/pesanan");
+    // Tujuan setelah login: dashboard customer. Dashboard yang mengarahkan
+    // staf ke /admin, jadi halaman ini tidak perlu menebak peran di sini.
+    router.push("/dashboard");
   }
 
   return (
     <div className="wrap narrow">
       <h1>Masuk.</h1>
       <p>
-        Akun lama template PHP tidak bisa dipakai di sini, karena password lamanya
-        tersimpan sebagai hash bcrypt yang tidak dikenal Supabase Auth. Daftar akun baru.
+        Masuk dengan akun yang terdaftar di Supabase Auth. Akun demo untuk
+        proyek ini: admin@outdoorrent.com (admin) dan customer@test.com
+        (customer). Akun baru bisa dibuat lewat halaman Daftar.
       </p>
       <form className="form" onSubmit={(e) => void submit(e)}>
         <div>

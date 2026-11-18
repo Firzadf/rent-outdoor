@@ -421,3 +421,68 @@ tbody tr:hover { background: var(--ground-2); }
   .cart-thumb { width: 100%; height: 160px; }
   .hero-chips { left: 12px; bottom: 12px; }
 }
+
+/* ------------------------------------------------------------------ */
+/* Tiga pengalaman terpisah (18 Nov 2026): landing publik memakai
+   SiteHeader kaca + footer, customer memakai sidebar forest,
+   admin/moderator memakai sidebar gelap. Token 3D yang sama dipakai
+   di ketiganya, hanya susunan dan warnanya yang beda. */
+
+/* Shell customer dan admin: sidebar + konten. */
+.app-shell { display: grid; grid-template-columns: 280px minmax(0, 1fr); min-height: 100vh; }
+.app-sidebar {
+  background: var(--grad-forest); color: var(--ground);
+  padding: 28px 20px; display: flex; flex-direction: column; gap: 8px;
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+.admin-shell .app-sidebar { background: var(--pine); }
+.app-wordmark { font-weight: 900; font-size: 26px; letter-spacing: -0.03em; text-decoration: none; color: var(--ground); }
+.app-wordmark span { color: var(--ember); }
+.app-sidebar-note { color: #c9d2c6; font-size: 14px; font-weight: 600; margin-bottom: 16px; }
+.app-nav { display: flex; flex-direction: column; gap: 4px; }
+.app-nav a {
+  text-decoration: none; font-weight: 700; color: #dfe8dd; padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+.app-nav a:hover { background: rgba(255, 255, 255, 0.12); transform: translateX(2px); }
+.app-nav a.active { background: var(--grad-ember); color: var(--accent-ink); box-shadow: var(--shadow-ember); }
+.app-sidebar-foot { margin-top: auto; display: flex; flex-direction: column; gap: 8px; padding-top: 24px; border-top: 1px solid #2c4636; }
+.app-side-link { background: none; border: 0; padding: 0; font: inherit; font-weight: 600; color: #dfe8dd; text-decoration: none; text-align: left; cursor: pointer; transition: color var(--dur-fast) var(--ease-out); }
+.app-side-link:hover { color: var(--ember); }
+.app-side-link.strong { color: var(--ground); font-weight: 800; }
+.app-user { color: #c9d2c6; font-size: 14px; font-weight: 600; }
+.app-main { min-width: 0; padding: 48px 40px 96px; }
+.app-main .wrap { padding-left: 0; padding-right: 0; }
+.app-main .cart-layout { padding: 0 0 48px; }
+
+/* Dashboard customer: pita gradien hutan, bukan hero foto landing. */
+.dash { display: flex; flex-direction: column; gap: 32px; max-width: 960px; }
+.dash-hero {
+  background: var(--grad-forest); color: var(--ground);
+  border-radius: var(--radius); padding: 36px 32px; box-shadow: var(--shadow-2);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.dash-eyebrow { font-size: 14px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ember); }
+.dash-hero h1 { font-size: clamp(30px, 3.4vw, 44px); font-weight: 900; }
+.dash-hero p { color: #dfe8dd; max-width: 60ch; }
+.dash-stats { margin-bottom: 0; }
+.dash-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.dash .section-head { margin-bottom: 20px; }
+
+/* Halaman admin di dalam sidebar. */
+.admin-page { max-width: 1080px; }
+
+/* Status bukti bayar. */
+.proof-state { color: var(--ink-soft); font-size: 14px; }
+.proof-missing { color: var(--warn); font-size: 14px; font-weight: 700; }
+
+@media (max-width: 900px) {
+  .app-shell { grid-template-columns: 1fr; }
+  .app-sidebar { position: static; height: auto; padding: 16px 20px; }
+  .app-nav { flex-direction: row; overflow-x: auto; }
+  .app-nav a { white-space: nowrap; }
+  .app-sidebar-foot { flex-direction: row; flex-wrap: wrap; align-items: center; border-top: 0; padding-top: 12px; }
+  .app-main { padding: 32px 20px 64px; }
+  .dash-hero { padding: 28px 20px; }
+}

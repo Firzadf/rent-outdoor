@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Archivo } from "next/font/google";
 import { AuthProvider } from "@/lib/auth";
 import { CartProvider } from "@/lib/cart";
-import { SiteHeader } from "@/components/SiteHeader";
-import { SiteFooter } from "@/components/SiteFooter";
 import "./globals.css";
 
 const archivo = Archivo({
@@ -18,16 +16,18 @@ export const metadata: Metadata = {
     "Sewa tenda, carrier, sleeping bag, dan peralatan hiking. Harga per hari, deposit dikembalikan setelah alat kembali.",
 };
 
+/**
+ * Layout akar hanya menyediakan font, provider, dan CSS.
+ * Header dan footer beda per pengalaman, jadi dipasang di layout
+ * route group masing-masing: (public) pakai SiteHeader + SiteFooter,
+ * (customer) pakai CustomerShell, (admin) pakai AdminShell.
+ */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="id">
       <body className={archivo.className}>
         <AuthProvider>
-          <CartProvider>
-            <SiteHeader />
-            <main>{children}</main>
-            <SiteFooter />
-          </CartProvider>
+          <CartProvider>{children}</CartProvider>
         </AuthProvider>
       </body>
     </html>

@@ -33,7 +33,7 @@ export type AppUser = {
   name: string;
   phone: string | null;
   address: string | null;
-  role: "admin" | "customer";
+  role: "admin" | "customer" | "moderator";
   auth_user_id: string | null;
 };
 

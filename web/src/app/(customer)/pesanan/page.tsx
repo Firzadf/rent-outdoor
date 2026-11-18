@@ -4,7 +4,8 @@ import { Suspense, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-import { getBrowserClient, publicStorageUrl } from "@/lib/supabase";
+import { getBrowserClient } from "@/lib/supabase";
+import { ProofLink } from "@/components/ProofLink";
 import { BOOKING_STATUS_LABEL, PAYMENT_STATUS_LABEL, type Booking, type Payment } from "@/lib/types";
 import { formatDate, formatRupiah } from "@/lib/format";
 
@@ -122,9 +123,6 @@ function OrdersContent() {
       ) : (
         bookings.map((b) => {
           const payment = b.payments?.[0];
-          const proofUrl = payment?.payment_proof
-            ? publicStorageUrl("payment-proofs", payment.payment_proof)
-            : null;
           return (
             <article key={b.id} className="card" style={{ marginBottom: 24 }}>
               <div className="card-body">
@@ -167,10 +165,10 @@ function OrdersContent() {
                     Pembayaran {formatRupiah(Number(payment.amount))} via {payment.bank_name ?? "-"} ·{" "}
                     <span className={`status status-${payment.status}`}>{PAYMENT_STATUS_LABEL[payment.status]}</span>
                     {payment.rejection_reason ? ` · Alasan ditolak: ${payment.rejection_reason}` : ""}
-                    {proofUrl && (
+                    {payment.payment_proof && (
                       <>
                         {" · "}
-                        <a href={proofUrl} target="_blank" rel="noreferrer">Lihat bukti bayar</a>
+                        <ProofLink path={payment.payment_proof} />
                       </>
                     )}
                   </p>

@@ -6,19 +6,36 @@ Satu repo dengan mentahan Flutter (`rental_outdoor/`) dan migrasi Supabase (`sup
 Repo: https://github.com/Firzadf/rent-outdoor
 Supabase: https://mdpmdjmorihsjsdhvsbn.supabase.co
 
-## Halaman
+## Halaman: tiga pengalaman yang beda
 
-- `/` Beranda, hero, picker tanggal sewa yang menghitung ulang, kategori, alat populer.
-- `/katalog` Pencarian, filter kategori, urutan harga dan rating.
-- `/alat/[id]` Detail alat, galeri, ulasan, tambah ke keranjang dengan tanggal sewa.
-- `/keranjang` Keranjang, rincian sewa per hari dan deposit.
-- `/checkout` Buat booking dan pembayaran, butuh login.
-- `/pesanan` Pesanan saya, status booking dan pembayaran, upload bukti bayar ke
-  bucket `payment-proofs`, batalkan pesanan.
-- `/profil` Edit nama, telepon, dan alamat.
-- `/masuk`, `/daftar` Supabase Auth email dan password.
-- `/admin` Khusus admin: ringkasan, ubah status booking, verifikasi pembayaran,
-  edit harga dan stok katalog, ubah peran pengguna.
+- **Landing publik** `/` (header kaca + footer): hero, picker tanggal sewa,
+  kategori, alat populer, cara sewa. Untuk pengunjung yang belum login.
+  Header publik: pengunjung melihat Masuk dan Daftar, customer melihat
+  Dashboard dan Pesanan Saya, staf melihat Admin.
+- **Customer setelah login** (sidebar forest, tanpa hero landing):
+  `/dashboard` sapaan nama, ringkasan pesanan aktif, aksi cepat, pesanan
+  terbaru; `/pesanan`, `/keranjang`, `/checkout`, `/profil` di bawah
+  layout customer yang sama. Login mengarah ke `/dashboard`, staf
+  diarahkan dari sana ke `/admin`.
+- **Admin/moderator** `/admin` (sidebar gelap, tab lewat `?tab=`):
+  Ringkasan, Booking, Pembayaran, Katalog, Pengguna. Hanya role admin
+  dan moderator yang boleh masuk, selain itu diarahkan dengan pesan.
+  Moderator boleh melihat dashboard, mengubah status booking, dan
+  memverifikasi pembayaran, tetapi tidak boleh mengubah peran pengguna,
+  harga, atau stok (dibatasi di UI dan di RLS, migrasi 00003).
+
+## Bukti bayar
+
+Bucket `payment-proofs` bersifat privat, jadi tautan publik
+`/storage/v1/object/public/...` selalu gagal dengan 404 "Bucket not
+found". Bukti bayar sekarang dibuka lewat signed URL 1 jam
+(`resolveProofUrl` di `lib/supabase.ts`, komponen `ProofLink`),
+di halaman pesanan customer dan di tab Pembayaran serta Booking admin.
+Bila file tidak ada di Storage, tampil sebagai "File bukti tidak
+ditemukan di Storage", bukan tautan rusak. Itu yang terjadi pada baris
+seed lama `uploads/payments/pay_*.png`: seed hanya mengisi database,
+file-nya tidak pernah diunggah, jadi tampil pesan itu sampai ada
+bukti baru yang diunggah lewat halaman pesanan.
 
 ## Jalan lokal
 
@@ -49,14 +66,16 @@ Service_role key tidak dipakai di website ini.
 
 ## Yang masih harus dijalankan di Supabase
 
-Migrasi utama `20261118000000` sudah live. Dua migrasi susulan belum
-dijalankan, jalankan berurutan di SQL Editor project rent-outdoor:
+Migrasi utama `20261118000000` dan susulan `00001` serta `00002` sudah
+live. Satu migrasi baru belum dijalankan, jalankan di SQL Editor
+project rent-outdoor:
 
-1. `supabase/migrations/20261118000001_users_insert_policy.sql`, policy INSERT
-   users supaya register dari web dan APK tidak gagal RLS 403 saat membuat
-   profil. Tanpa ini, checkout menampilkan pesan profil belum terbentuk.
-2. `supabase/migrations/20261118000002_harden_rls_stock.sql`, RLS ketat
-   pemilik dan admin, validasi tanggal dan stok, fungsi `available_stock()`.
+3. `supabase/migrations/20261118000003_moderator_role.sql`, peran
+   moderator: constraint role jadi ('customer', 'admin', 'moderator'),
+   helper `is_moderator()` dan `is_staff()`, dan policy RLS staf untuk
+   baca dan ubah booking serta verifikasi pembayaran. Tanpa ini,
+   moderator ditolak RLS saat membuka admin, dan mengubah role ke
+   moderator gagal check constraint.
 
 Matikan konfirmasi email di Authentication, Sign in / Providers, Email,
 supaya register langsung bisa login untuk demo tugas kuliah.
