@@ -172,13 +172,12 @@ tidak dipakai: sistem CSS polos proyek ini sudah cukup, menambah
   ulasan sebagai kartu (bukan tabel), alat terkait memakai gambarnya
   sendiri (dulu memakai gambar alat yang dibuka), keterangan sewa
   dari aturan proyek (deposit kembali, harga per hari, ambil-kembali).
-- **Animasi 3D:** latar ambient hero (`HeroDepth`, lima bentuk redup
-  melayang dengan kedalaman + kemiringan mengikuti pointer, hanya
-  transform dan opacity, dua bentuk di layar kecil) dan layar loading
-  3D saat pertama buka (`IntroLoader`, mark berputar masuk dan huruf
-  merangkai, sekitar 1,6 detik, sekali per sesi tab, klik untuk
-  lewati). Loading screen adalah momen 3D utama, latar hero dibuat
-  tenang. Semua mati di `prefers-reduced-motion`. Tanpa Three.js.
+- **Animasi 3D:** latar hero (`HeroDepth`, Three.js low-poly, lihat
+  revisi gunung Three.js di bawah) dan layar loading 3D saat pertama
+  buka (`IntroLoader`, mark berputar masuk dan huruf merangkai,
+  sekitar 1,6 detik, sekali per sesi tab, klik untuk lewati).
+  Loading screen adalah momen 3D utama, latar hero dibuat tenang.
+  Semua mati di `prefers-reduced-motion`.
 - **Logo dan favicon:** mark lingkaran forest + gunung putih +
   matahari oranye (`components/LogoMark.tsx`), dipakai di header
   publik, sidebar admin, dan loading screen. Favicon di `public/`:
@@ -223,7 +222,9 @@ tidak dipakai: sistem CSS polos proyek ini sudah cukup, menambah
   modern-web-guidance `parallax-scroll-effects`), drift lambat
   di dalam SVG, kemiringan mengikuti pointer. Tombol "Jeda
   animasi" di pojok hero memenuhi WCAG 2.2.2. Di layar kecil
-  hanya punggung depan dan matahari. Tanpa Three.js.
+  hanya punggung depan dan matahari. Versi ini diganti lagi oleh
+  adegan Three.js di bawah, karena gunung SVG-nya tidak kelihatan
+  (tertutup foto hero, hanya matahari yang tampak mengambang).
 - **Gerakan scroll (modern-web-guidance `scroll-entry-exit-effects`
   dan `motion`):** headline hero naik dan memudar halus saat
   hero keluar layar; section masuk dengan rise + opacity lewat
@@ -236,3 +237,40 @@ tidak dipakai: sistem CSS polos proyek ini sudah cukup, menambah
   blok harga dipadatkan sedikit. Satu alat hanya punya satu foto
   di data, jadi tidak ada galeri thumbnail. Di layar kecil urutan
   jadi foto, info, keterangan.
+
+## Revisi gunung 3D Three.js (18 Nov 2026)
+
+- **Penyebab gunung tidak kelihatan (terverifikasi di kode):**
+  `.hero-depth` lama menutupi seluruh hero dan punggung SVG duduk
+  di `bottom: 0`, tepat di belakang foto hero (`.hero-media`
+  menutupinya penuh). Yang tersisa hanya matahari di `top: 10%`
+  zona headline, jadi user melihat "bulatan doang gajelas".
+  Drift SVG hanya 14px, terlalu halus untuk terlihat.
+- **Pendekatan:** Three.js `^0.187.0` lewat npm (tidak ada MCP 3D
+  yang relevan di lingkungan ini; Canva/Figma bukan pembuat adegan
+  3D dan butuh akun), plain Three.js tanpa react-three-fiber
+  supaya tidak ada risiko kompatibilitas React 19, dynamic import
+  di `useEffect` supaya tidak ada Three.js di server. User
+  mengizinkan pakai tool, MCP, atau library apa pun demi animasi
+  3D yang keren dan modern.
+- **Adegan (`HeroDepth`):** tiga lapis gunung low-poly (kerucut
+  flat-shading, jauh moss, tengah pine-2, dekat pine), lantai
+  lembah gelap, matahari ember dengan halo, awan datar yang
+  bergerak pelan, kabut `Fog` untuk kedalaman. Kamera bergerak
+  pelan (drift), parallax mengikuti pointer dan scroll. Canvas
+  dibatasi ke zona headline (`.hero-top`) saja, bukan seluruh
+  hero, jadi gunung duduk tepat di belakang headline dan jelas
+  terlihat. Kabut bawah (haze) memudarkan dasar gunung ke warna
+  ground supaya tombol ghost tetap terbaca.
+- **Nuansa Red Bull:** halaman Red Bull yang diminta user
+  (theredbulletin Tenerife) tidak bisa dibuka dari sini (domain
+  diblokir kebijakan), dicatat jujur, jadi yang diterapkan adalah
+  pola umum editorial petualangan: foto imersif memenuhi layar,
+  tipografi display besar dan berani, adegan alam yang terasa
+  nyata, bukan hiasan samar. Tidak ada konten Red Bull yang
+  disalin. Identitas hijau forest dan oranye dipertahankan.
+- **Performa dan aksesibilitas:** pixel ratio dibatasi 2 (1,5 di
+  layar kecil), gunung lebih sedikit di layar kecil, animasi
+  berhenti saat tab tidak terlihat, tombol "Jeda animasi"
+  mematikan loop, reduced motion hanya merender satu frame statis
+  dan tombol jeda disembunyikan.

@@ -32,23 +32,29 @@ export default async function HomePage() {
         atas field datar, foto sebagai bidang dominan di bawahnya, picker
         tanggal sebagai bar datar yang menumpang di sambungan foto dan
         ground. Tanpa panel gradien, tanpa chip kaca, tanpa headline
-        kata per kata. Latar 3D ambient (HeroDepth) redup di belakang.
+        kata per kata. Latar gunung 3D (HeroDepth, Three.js low-poly)
+        hidup di dalam zona headline saja, bukan di seluruh hero, supaya
+        tidak tertutup foto dan jelas terlihat di belakang teks.
+        Nuansa editorial petualangan: foto imersif, tipografi besar dan
+        berani, adegan alam yang terasa nyata.
       */}
       <section className="hero">
-        <HeroDepth />
-        <div className="wrap hero-top">
-          <h1>
-            Sewa alat outdoor,
-            <br />
-            tanpa harus beli.
-          </h1>
-          <p className="hero-sub">
-            Sewa tenda, carrier, sleeping bag, dan peralatan hiking per hari.
-            Ambil, pakai, kembalikan. Deposit kembali utuh bila alat kembali baik.
-          </p>
-          <div className="hero-cta">
-            <Link href="/katalog" className="btn btn-primary btn-lg">Lihat Semua Alat</Link>
-            <Link href="/daftar" className="btn btn-ghost">Buat Akun</Link>
+        <div className="hero-top">
+          <HeroDepth />
+          <div className="wrap hero-top-inner">
+            <h1>
+              Sewa alat outdoor,
+              <br />
+              tanpa harus beli.
+            </h1>
+            <p className="hero-sub">
+              Sewa tenda, carrier, sleeping bag, dan peralatan hiking per hari.
+              Ambil, pakai, kembalikan. Deposit kembali utuh bila alat kembali baik.
+            </p>
+            <div className="hero-cta">
+              <Link href="/katalog" className="btn btn-primary btn-lg">Lihat Semua Alat</Link>
+              <Link href="/daftar" className="btn btn-ghost">Buat Akun</Link>
+            </div>
           </div>
         </div>
         <div className="hero-media">
