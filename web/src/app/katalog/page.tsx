@@ -5,7 +5,7 @@ import { CatalogClient } from "./CatalogClient";
 export default async function KatalogPage() {
   const { categories, equipments, images, isDemo } = await fetchCatalog();
   return (
-    <div className="wrap section">
+    <div className="wrap section reveal">
       <div className="section-head">
         <h2>Katalog alat.</h2>
         <p>

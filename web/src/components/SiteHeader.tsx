@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
@@ -9,9 +10,19 @@ export function SiteHeader() {
   const { user, appUser, loading, signOut } = useAuth();
   const { count } = useCart();
   const pathname = usePathname();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    function onScroll() {
+      setScrolled(window.scrollY > 12);
+    }
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <header className="site-header">
+    <header className={`site-header${scrolled ? " scrolled" : ""}`}>
       <div className="wrap header-inner">
         <Link href="/" className="wordmark">
           Outdoor<span>Rent</span>

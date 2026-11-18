@@ -1,9 +1,13 @@
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { fetchCatalog } from "@/lib/data";
 import { EquipmentCard } from "@/components/EquipmentCard";
 import { RentalDates } from "@/components/RentalDates";
+import { Tilt } from "@/components/Tilt";
 import { PHOTO_BY_CATEGORY } from "@/lib/seed";
+
+const HERO_WORDS = ["Alat", "outdoor", "siap", "jalan,", "tanpa", "harus", "beli."];
 
 export default async function HomePage() {
   const { categories, equipments, images, isDemo } = await fetchCatalog();
@@ -27,7 +31,13 @@ export default async function HomePage() {
 
       <section className="hero">
         <div className="hero-copy">
-          <h1>Alat outdoor siap jalan, tanpa harus beli.</h1>
+          <h1>
+            {HERO_WORDS.map((word, i) => (
+              <span key={i} className="hero-word" style={{ "--i": i } as CSSProperties}>
+                {word}{" "}
+              </span>
+            ))}
+          </h1>
           <p>
             Sewa tenda, carrier, sleeping bag, dan peralatan hiking per hari.
             Ambil, pakai, kembalikan. Deposit kembali utuh bila alat kembali baik.
@@ -46,10 +56,14 @@ export default async function HomePage() {
             priority
             sizes="(max-width: 900px) 100vw, 50vw"
           />
+          <div className="hero-chips" aria-hidden="true">
+            <span className="hero-chip">{active.length} alat aktif · {categories.length} kategori</span>
+            <span className="hero-chip">Deposit kembali utuh</span>
+          </div>
         </div>
       </section>
 
-      <section className="section">
+      <section className="section reveal">
         <div className="wrap">
           <div className="section-head">
             <h2>Semua alat, lima kategori.</h2>
@@ -76,7 +90,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="section section-alt">
+      <section className="section section-alt reveal">
         <div className="wrap">
           <div className="section-head">
             <h2>Paling sering disewa.</h2>
@@ -84,18 +98,19 @@ export default async function HomePage() {
           </div>
           <div className="eq-grid">
             {popular.map((eq) => (
-              <EquipmentCard
-                key={eq.id}
-                equipment={eq}
-                images={images}
-                categoryName={categories.find((c) => c.id === eq.category_id)?.name}
-              />
+              <Tilt key={eq.id}>
+                <EquipmentCard
+                  equipment={eq}
+                  images={images}
+                  categoryName={categories.find((c) => c.id === eq.category_id)?.name}
+                />
+              </Tilt>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="section">
+      <section className="section reveal">
         <div className="wrap">
           <div className="section-head">
             <h2>Cara sewa.</h2>

@@ -18,6 +18,9 @@ export function EquipmentCard({
       <Link href={`/alat/${equipment.id}`} className="card-media" aria-label={equipment.name}>
         <EquipmentPhoto equipment={equipment} images={images} className="card-img" />
         <span className="card-cat">{categoryName ?? ""}</span>
+        <span className={`card-stock${outOfStock ? " out" : ""}`}>
+          {outOfStock ? "Habis" : `Stok ${equipment.stock}`}
+        </span>
       </Link>
       <div className="card-body">
         <h3 className="card-title">

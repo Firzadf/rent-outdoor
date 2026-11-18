@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { fetchCatalog, fetchEquipmentDetail } from "@/lib/data";
 import { EquipmentPhoto } from "@/components/EquipmentPhoto";
 import { EquipmentCard } from "@/components/EquipmentCard";
+import { Tilt } from "@/components/Tilt";
 import { formatRupiah } from "@/lib/format";
 import { AddToCart } from "./AddToCart";
 
@@ -25,9 +26,11 @@ export default async function EquipmentDetailPage({ params }: { params: Promise<
   return (
     <div className="wrap">
       <div className="detail">
-        <div className="detail-media">
-          <EquipmentPhoto equipment={equipment} images={images} sizes="(max-width: 900px) 100vw, 55vw" />
-        </div>
+        <Tilt max={4}>
+          <div className="detail-media">
+            <EquipmentPhoto equipment={equipment} images={images} sizes="(max-width: 900px) 100vw, 55vw" />
+          </div>
+        </Tilt>
         <div className="detail-info">
           <p style={{ fontWeight: 700, color: "var(--accent)", marginBottom: 8 }}>{categoryName}</p>
           <h1>{equipment.name}</h1>
@@ -42,7 +45,7 @@ export default async function EquipmentDetailPage({ params }: { params: Promise<
         </div>
       </div>
 
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section reveal" style={{ paddingTop: 0 }}>
         <div className="section-head">
           <h2>Ulasan penyewa.</h2>
         </div>
@@ -73,18 +76,19 @@ export default async function EquipmentDetailPage({ params }: { params: Promise<
       </section>
 
       {related.length > 0 && (
-        <section className="section" style={{ paddingTop: 0 }}>
+        <section className="section reveal" style={{ paddingTop: 0 }}>
           <div className="section-head">
             <h2>Alat lain di kategori {categoryName}.</h2>
           </div>
           <div className="eq-grid">
             {related.map((eq) => (
-              <EquipmentCard
-                key={eq.id}
-                equipment={eq}
-                images={images}
-                categoryName={categoryName}
-              />
+              <Tilt key={eq.id}>
+                <EquipmentCard
+                  equipment={eq}
+                  images={images}
+                  categoryName={categoryName}
+                />
+              </Tilt>
             ))}
           </div>
           <p style={{ marginTop: 16, color: "var(--ink-soft)", fontSize: 15 }}>

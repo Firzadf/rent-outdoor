@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { EquipmentCard } from "@/components/EquipmentCard";
+import { Tilt } from "@/components/Tilt";
 import { rentalDays } from "@/lib/format";
 import type { Category, Equipment, EquipmentImage } from "@/lib/types";
 
@@ -90,12 +91,13 @@ export function CatalogClient({
       ) : (
         <div className="eq-grid">
           {filtered.map((eq: Equipment) => (
-            <EquipmentCard
-              key={eq.id}
-              equipment={eq}
-              images={images}
-              categoryName={categories.find((c) => c.id === eq.category_id)?.name}
-            />
+            <Tilt key={eq.id}>
+              <EquipmentCard
+                equipment={eq}
+                images={images}
+                categoryName={categories.find((c) => c.id === eq.category_id)?.name}
+              />
+            </Tilt>
           ))}
         </div>
       )}

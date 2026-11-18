@@ -79,10 +79,44 @@ foto asli tampil otomatis lewat URL publik bucket.
 ## Desain
 
 Mengikuti `~/workspace/design.md`: token warna di `:root`, satu ground,
-satu ink, satu aksen oranye, sudut persegi, tanpa gradien dan tanpa kaca.
+satu ink, satu aksen oranye, konten penuh per section, bukti tidak dikarang.
 Identitas hijau forest dan oranye dipertahankan dari template.
-Referensi yang dipakai: Basecamp Rental Co (katalog disusun per jenis
-perjalanan, harga di depan), Wilderness Rentals Canmore (harga per ukuran
-tenda), dan Louez.io (etalase sewa dengan deposit). Yang diambil: harga per
-hari dan deposit selalu terlihat di kartu, kategori sebagai pintu masuk,
-dan alur pilih tanggal, bayar, ambil, kembalikan.
+
+Upgrade UI 18 Nov 2026 (brief user: modern, 3D, animasi, transisi):
+penyimpangan yang dicatat di komentar atas `globals.css`, sama seperti
+`depth.dart` di aplikasi Flutter, arah 3D dari user menang atas larangan
+gradien, kaca, dan bayangan di design.md §2. Yang ditambahkan: gradien
+hutan di hero dan footer, gradien oranye di tombol primer, panel kaca
+di picker tanggal, chip kategori, dan chip hero, bayangan berlapis di
+kartu, tilt 3D mengikuti pointer (`components/Tilt.tsx`, hanya mouse dan
+tanpa reduced motion), transisi antar halaman lewat View Transitions,
+scroll reveal lewat CSS `animation-timeline: view()` dengan fallback
+konten tetap terlihat, animasi kata per kata di headline hero, zoom
+lambat di foto hero, chip mengambang, dan micro-interaction di tombol,
+kartu, dan form. Semua gerakan memakai transform dan opacity saja, dan
+mati di `prefers-reduced-motion`.
+
+Referensi live yang dibuka 18 Nov 2026: Land-book (galeri landing,
+pola hero besar dan section penuh), React Bits (komponen animasi sebagai
+source yang dimiliki sendiri, pola teks dan background beranimasi),
+Magic UI (150+ komponen animasi React, pola bento dan efek sorotan,
+yang diambil hanya prinsip satu efek fokus per layar), Typewolf
+(di luar zona nyaman, pasangan font dan hierarki tipografi, yang diambil
+hanya disiplin ukuran display). Yang sengaja tidak disalin: rating,
+testimoni, dan statistik dari situs referensi, karena bukan milik
+OutdoorRent. Referensi sewa yang sudah dipakai sebelumnya: Basecamp
+Rental Co, Wilderness Rentals Canmore, Louez.io.
+
+Skill yang dipakai: modern-web-guidance (motion, cross-document
+transitions, parallax, retrieve dulu sebelum menulis kode),
+taste-frontend (arah dan house style), hallmark (floor token dan
+focus-visible), impeccable (mode Persuade untuk halaman publik,
+Operate untuk admin dan checkout), emil-design-eng (tekan 0,97,
+ease-out, tanpa transition: all), make-interfaces-feel-better
+(radius konsentris, shadow berlapis, angka tabular, stagger),
+animation-principles dan kinetic-typography (headline kata per kata).
+GSAP dan stageshow tidak dipakai: animasi scroll dan timeline sudah
+tercakup CSS scroll-driven dan View Transitions tanpa dependensi baru,
+dan hero memakai foto asli, bukan faux UI. Watermelon UI dicek dan
+tidak dipakai: sistem CSS polos proyek ini sudah cukup, menambah
+600 komponen hanya menambah bobot.
