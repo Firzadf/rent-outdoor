@@ -191,3 +191,48 @@ tidak dipakai: sistem CSS polos proyek ini sudah cukup, menambah
   laporan user: teks kedaluwarsa soal migrasi 00001/00002 di checkout,
   daftar, dan profil (migrasi sudah live), dan `.main-nav` CSS mati
   setelah header diganti strip kategori.
+
+## Revisi tombol, gunung 3D, scroll, dan detail (18 Nov 2026)
+
+- **Referensi yang dibuka:** Component Gallery (60 komponen dari 95
+  design system nyata), 21st.dev (pola shadcn, tombol kecil teks
+  medium dengan padding lega), Realtime Colors (aturan 60-30-10,
+  3 warna cukup, primer hanya untuk CTA utama), shadcn/ui Button
+  (varian default/outline/ghost/secondary/link, tangga ukuran,
+  cursor pointer, status loading), Land-book (galeri landing),
+  Refero (layar produk nyata per alur: detail produk, katalog,
+  tambah ke keranjang, filter), Maxibestof (kurasi harian +
+  pasangan font tiap situs), Layers (komunitas desain, di luar
+  zona nyaman). Zalora dicoba lagi dan tetap ditolak 403, jadi
+  pola marketplace yang dipakai adalah pola umum yang sudah ada.
+  Mobbin butuh login, dilewati. Tidak ada konten, foto, harga,
+  atau teks referensi yang disalin.
+- **Sistem tombol baru:** datar satu warna isi tanpa gradien dan
+  tanpa bayangan; radius tajam 4px (design.md §3, bukan radius
+  lembut 9-16px); hover hanya menggelapkan isi; tekan turun 1px;
+  fokus outline ink 3px; nonaktif abu datar; tangga ukuran kecil
+  36px, default 48px, besar 56px; primer ember datar, ghost border
+  ink 2px. Hover kartu tidak lagi naik dengan bayangan generik,
+  garis tepi menggelap. Input dan select radius 4px yang sama,
+  ada state hover dan nonaktif. Tab admin dan pill aktif header
+  ikut sistem yang sama (pine dan ember datar).
+- **Gunung 3D (`HeroDepth`):** lima bentuk generik diganti tiga
+  punggung gunung SVG berlapis (belakang, tengah, depan) dengan
+  matahari ember dan kabut yang bergerak pelan. Parallax scroll
+  lewat view-timeline hero (offset beda per lapisan, sesuai
+  modern-web-guidance `parallax-scroll-effects`), drift lambat
+  di dalam SVG, kemiringan mengikuti pointer. Tombol "Jeda
+  animasi" di pojok hero memenuhi WCAG 2.2.2. Di layar kecil
+  hanya punggung depan dan matahari. Tanpa Three.js.
+- **Gerakan scroll (modern-web-guidance `scroll-entry-exit-effects`
+  dan `motion`):** headline hero naik dan memudar halus saat
+  hero keluar layar; section masuk dengan rise + opacity lewat
+  animation-timeline view(); anak grid kategori, alat, langkah,
+  dan ulasan menyusul dengan range yang sama. Hanya transform
+  dan opacity, dengan @supports dan fallback konten tetap
+  terlihat, dan semua mati di `prefers-reduced-motion`.
+- **Detail seimbang:** keterangan sewa pindah ke kolom kiri di
+  bawah foto (bukan lagi section tiga kolom selebar halaman),
+  blok harga dipadatkan sedikit. Satu alat hanya punya satu foto
+  di data, jadi tidak ada galeri thumbnail. Di layar kecil urutan
+  jadi foto, info, keterangan.

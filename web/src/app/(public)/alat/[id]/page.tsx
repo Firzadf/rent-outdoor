@@ -41,10 +41,41 @@ export default async function EquipmentDetailPage({ params }: { params: Promise<
         persen dengan rasio 4/3 yang dibatasi, info kanan di atas lipatan.
         Foto tidak lagi di dalam Tilt: tilt membuat media meregang setinggi
         kolom info yang panjang, sehingga foto memenuhi seluruh viewport.
+        Keterangan sewa ada di kolom kiri di bawah foto, supaya kedua kolom
+        seimbang dan tidak ada ruang kosong besar di bawah foto. Satu alat
+        hanya punya satu foto di data, jadi tidak ada galeri thumbnail.
       */}
       <div className="detail">
-        <div className="detail-media">
-          <EquipmentPhoto equipment={equipment} images={images} sizes="(max-width: 900px) 100vw, 55vw" />
+        <div className="detail-col">
+          <div className="detail-media">
+            <EquipmentPhoto equipment={equipment} images={images} sizes="(max-width: 900px) 100vw, 55vw" />
+          </div>
+          <aside className="detail-notes" aria-label="Keterangan sewa">
+            <h2>Keterangan sewa.</h2>
+            <ul>
+              <li>
+                <strong>Deposit kembali utuh</strong>
+                <p>
+                  Deposit dibayar bersama sewa dan dikembalikan setelah alat
+                  kembali dalam kondisi baik dan diperiksa.
+                </p>
+              </li>
+              <li>
+                <strong>Harga dihitung per hari</strong>
+                <p>
+                  Sewa dihitung dari harga per hari dikali jumlah hari, dari
+                  tanggal ambil sampai tanggal kembali yang dipilih.
+                </p>
+              </li>
+              <li>
+                <strong>Ambil dan kembali</strong>
+                <p>
+                  Ambil alat pada tanggal yang dipilih, pakai, lalu kembalikan
+                  tepat waktu pada tanggal kembali.
+                </p>
+              </li>
+            </ul>
+          </aside>
         </div>
         <div className="detail-info">
           <p style={{ fontWeight: 700, color: "var(--accent)", marginBottom: 8 }}>{categoryName}</p>
@@ -59,35 +90,6 @@ export default async function EquipmentDetailPage({ params }: { params: Promise<
           <AddToCart equipment={equipment} />
         </div>
       </div>
-
-      <section className="section reveal" style={{ paddingTop: 0 }}>
-        <div className="section-head">
-          <h2>Keterangan sewa.</h2>
-        </div>
-        <div className="steps">
-          <div className="step">
-            <h3>Deposit kembali utuh</h3>
-            <p>
-              Deposit dibayar bersama sewa dan dikembalikan setelah alat
-              kembali dalam kondisi baik dan diperiksa.
-            </p>
-          </div>
-          <div className="step">
-            <h3>Harga dihitung per hari</h3>
-            <p>
-              Sewa dihitung dari harga per hari dikali jumlah hari, dari
-              tanggal ambil sampai tanggal kembali yang dipilih.
-            </p>
-          </div>
-          <div className="step">
-            <h3>Ambil dan kembali</h3>
-            <p>
-              Ambil alat pada tanggal yang dipilih, pakai, lalu kembalikan
-              tepat waktu pada tanggal kembali.
-            </p>
-          </div>
-        </div>
-      </section>
 
       <section className="section reveal" style={{ paddingTop: 0 }}>
         <div className="section-head">

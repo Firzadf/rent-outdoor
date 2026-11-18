@@ -8,8 +8,13 @@
    Revisi hero 18 Nov 2026: headline display memakai Fraunces (serif
    editorial, disiplin Typewolf) sebagai pasangan Archivo; hero memakai
    field datar dan foto sebagai bidang dominan, tanpa panel gradien dan
-   tanpa chip kaca. Gradien hanya tersisa di tombol primer dan aksen
-   brand yang memang identitas proyek. */
+   tanpa chip kaca. Gradien hanya tersisa di field footer dan aksen brand.
+   Revisi tombol 18 Nov 2026 (referensi: Component Gallery, shadcn/ui,
+   Realtime Colors, 21st.dev, Land-book, Refero, Maxibestof, Layers):
+   tombol DATAR satu warna isi, tanpa gradien dan tanpa bayangan;
+   radius tombol 4px yang tajam dan editorial, bukan radius lembut 9-16px
+   yang jadi default situs lemah (design.md §3); hover hanya menggelapkan
+   warna isi, tekan turun 1px; fokus jelas; nonaktif tidak bisa diklik. */
 :root {
   --font-sans: var(--font-archivo), system-ui, -apple-system, sans-serif;
   --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
@@ -33,16 +38,20 @@
   --sand: #f0ebdf;
   --ember: #f06a2e;
   --grad-forest: linear-gradient(135deg, #0f2a1a 0%, #16301f 45%, #1e6b3a 100%);
-  --grad-ember: linear-gradient(135deg, #f06a2e 0%, #e4571e 55%, #c7430f 100%);
   --grad-scrim: linear-gradient(180deg, rgba(15, 42, 26, 0) 0%, rgba(15, 42, 26, 0.72) 100%);
   --glass: rgba(255, 255, 255, 0.82);
   --glass-border: rgba(255, 255, 255, 0.65);
   --shadow-1: 0 1px 2px rgba(15, 42, 26, 0.08), 0 4px 12px rgba(15, 42, 26, 0.08);
   --shadow-2: 0 2px 4px rgba(15, 42, 26, 0.08), 0 12px 28px rgba(15, 42, 26, 0.14);
   --shadow-3: 0 4px 8px rgba(15, 42, 26, 0.1), 0 24px 48px rgba(15, 42, 26, 0.2);
-  --shadow-ember: 0 8px 20px rgba(228, 87, 30, 0.35);
   --radius: 20px;
-  --radius-sm: 14px;
+  --radius-sm: 8px;
+  /* Sistem radius satu keputusan: tombol dan input tajam 4px, label
+     dan menu dalam 8px, kartu dan panel 20px, chip dan pil 999px. */
+  --radius-btn: 4px;
+  --radius-inner: 8px;
+  --radius-chip: 999px;
+  --tap: 48px;
   --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
   --ease-spring: cubic-bezier(0.34, 1.4, 0.4, 1);
   --dur-fast: 160ms;
@@ -64,7 +73,6 @@
     --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.3);
     --shadow-2: 0 2px 4px rgba(0, 0, 0, 0.35), 0 12px 28px rgba(0, 0, 0, 0.45);
     --shadow-3: 0 4px 8px rgba(0, 0, 0, 0.4), 0 24px 48px rgba(0, 0, 0, 0.55);
-    --shadow-ember: 0 8px 20px rgba(240, 106, 46, 0.3);
   }
 }
 
@@ -123,9 +131,10 @@ img { display: block; max-width: 100%; }
 .header-search { display: flex; gap: 8px; flex: 1; min-width: 180px; max-width: 420px; }
 .header-search input {
   flex: 1; min-width: 0; font: inherit; padding: 10px 14px; border: 1px solid var(--line);
-  border-radius: var(--radius-sm); background: var(--surface); color: var(--ink);
+  border-radius: var(--radius-btn); background: var(--surface); color: var(--ink);
   transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
 }
+.header-search input:hover { border-color: var(--ink-soft); }
 .header-search input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(228, 87, 30, 0.22); outline: none; }
 
 /* Strip kategori di bawah baris header: tautan rapi, geser horizontal di HP. */
@@ -137,8 +146,8 @@ img { display: block; max-width: 100%; }
   transition: color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
 }
 .cat-nav-inner a:hover { color: var(--ink); background: var(--ground-2); }
-.cat-nav-inner a.active { color: var(--accent); background: #ffe8dc; }
-@media (prefers-color-scheme: dark) { .cat-nav-inner a.active { background: #3a1c10; } }
+/* Pill aktif: isi ember datar, teks putih. Bukan tint pil pucat. */
+.cat-nav-inner a.active { color: #ffffff; background: var(--accent); }
 .header-actions { margin-left: auto; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .cart-link { font-weight: 600; text-decoration: none; transition: color var(--dur-fast) var(--ease-out); }
 .cart-link:hover { color: var(--accent); }
@@ -157,24 +166,37 @@ img { display: block; max-width: 100%; }
 }
 .account-menu-list a:hover, .account-menu-list button:hover { background: var(--ground-2); }
 
-/* Tombol: gradien oranye untuk aksi primer, bayangan berlapis, lift saat
-   hover, mengecil 0,97 saat ditekan (emil-design-eng). */
+/* Sistem tombol (revisi 18 Nov 2026, pola shadcn/ui + Component
+   Gallery + Realtime Colors 60-30-10): satu warna isi datar tanpa
+   gradien dan tanpa bayangan; radius tajam 4px (design.md §3);
+   hover hanya menggelapkan isi; tekan turun 1px dan terasa;
+   fokus outline ink 3px supaya terlihat di atas ember; nonaktif
+   abu datar, jelas tidak bisa diklik. Satu tangga ukuran:
+   kecil 36px, default 48px, besar 56px. Aksen ember hanya untuk
+   aksi primer, sisanya pine datar atau ghost. */
 .btn {
-  display: inline-block; border: 0; cursor: pointer; font: inherit; font-weight: 700;
-  text-decoration: none; text-align: center; padding: 12px 22px; border-radius: var(--radius-sm);
-  background: var(--ink); color: var(--ground);
-  box-shadow: var(--shadow-1);
-  transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-med) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: var(--tap); border: 0; cursor: pointer; font: inherit; font-weight: 700;
+  font-size: 16px; letter-spacing: -0.01em; text-decoration: none; text-align: center;
+  padding: 12px 22px; border-radius: var(--radius-btn);
+  background: var(--pine); color: var(--ground); box-shadow: none;
+  transition: background-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
 }
-.btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); }
-.btn:active { transform: scale(0.97); box-shadow: var(--shadow-1); }
-.btn-primary { background: var(--grad-ember); color: var(--accent-ink); box-shadow: var(--shadow-ember); }
-.btn-primary:hover { box-shadow: var(--shadow-2), var(--shadow-ember); }
-.btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); padding: 11px 18px; box-shadow: none; }
-.btn-ghost:hover { border-color: var(--ink); background: transparent; box-shadow: var(--shadow-1); }
-.btn-block { display: block; width: 100%; }
-.btn:disabled, .btn[aria-disabled="true"] { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
-.btn-small { padding: 8px 14px; font-size: 15px; }
+.btn:hover { background: var(--moss); }
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.btn-primary { background: var(--accent); color: #ffffff; }
+.btn-primary:hover { background: var(--accent-dark); }
+.btn-primary:active { background: var(--accent-dark); }
+.btn-ghost { background: transparent; color: var(--ink); border: 2px solid var(--ink); padding: 10px 20px; box-shadow: none; }
+.btn-ghost:hover { border-color: var(--ink); background: var(--ground-2); }
+.btn-ghost:active { background: var(--ground-2); }
+.btn-block { display: flex; width: 100%; }
+.btn:disabled, .btn[aria-disabled="true"] { background: var(--line); color: var(--ink-soft); cursor: not-allowed; transform: none; box-shadow: none; border-color: transparent; }
+.btn-ghost:disabled, .btn-ghost[aria-disabled="true"] { background: transparent; border-color: var(--line); }
+.btn-small { min-height: 36px; padding: 8px 14px; font-size: 15px; }
+.btn-small.btn-ghost { padding: 6px 12px; }
+.btn-lg { min-height: 56px; padding: 14px 28px; font-size: 17px; }
 
 /* Banner mode contoh */
 .demo-banner { background: var(--accent); color: var(--accent-ink); padding: 10px 0; font-weight: 600; font-size: 15px; }
@@ -193,19 +215,49 @@ img { display: block; max-width: 100%; }
 .hero-media img { object-fit: cover; }
 .hero-bar { position: relative; z-index: 2; margin-top: -64px; padding-bottom: 64px; }
 
-/* Latar 3D ambient: bentuk tembus pandang melayang pelan dengan
-   kedalaman, kemiringan halus mengikuti pointer (di komponen).
-   Hanya transform dan opacity, redup supaya teks tetap jelas. */
+/* Latar gunung 3D (revisi 18 Nov 2026, modern-web-guidance
+   parallax-scroll-effects + motion): pemandangan gunung berlapis di
+   belakang teks hero. Tiga punggung gunung SVG dengan kedalaman berbeda,
+   matahari ember, dan kabut yang bergerak pelan. Lapisan luar mengatur
+   parallax scroll (view-timeline hero, offset beda per lapisan),
+   SVG di dalamnya mengatur drift lambat; pointer memiringkan seluruh
+   adegan seperti Tilt kartu. Hanya transform dan opacity, tanpa Three.js.
+   Tenang dan redup supaya teks tetap jelas; di layar kecil hanya
+   punggung depan dan matahari yang tampil. */
+.hero { view-timeline: --hero; }
 .hero-depth { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; transform: perspective(900px) rotateX(calc(var(--py, 0) * -2deg)) rotateY(calc(var(--px, 0) * 3deg)); transition: transform 400ms var(--ease-out); }
-.hero-shape { position: absolute; display: block; will-change: transform; }
-.hero-shape.s1 { width: 180px; height: 180px; left: 4%; top: 8%; border-radius: 50%; background: var(--moss); opacity: 0.12; animation: drift-a 22s ease-in-out infinite alternate; }
-.hero-shape.s2 { width: 120px; height: 120px; right: 8%; top: 16%; border-radius: 28%; background: var(--ember); opacity: 0.1; animation: drift-b 26s ease-in-out infinite alternate; }
-.hero-shape.s3 { width: 90px; height: 90px; left: 38%; top: 56%; border-radius: 50%; background: var(--pine); opacity: 0.1; animation: drift-c 20s ease-in-out infinite alternate; }
-.hero-shape.s4 { width: 150px; height: 150px; right: 22%; bottom: 6%; border-radius: 50%; border: 2px solid var(--ember); opacity: 0.16; animation: drift-b 24s ease-in-out infinite alternate-reverse; }
-.hero-shape.s5 { width: 70px; height: 70px; left: 12%; bottom: 12%; border-radius: 24%; background: var(--moss); opacity: 0.12; animation: drift-a 18s ease-in-out infinite alternate-reverse; }
-@keyframes drift-a { from { transform: translate3d(0, 0, 0) rotate(0deg); } to { transform: translate3d(24px, -18px, 40px) rotate(8deg); } }
-@keyframes drift-b { from { transform: translate3d(0, 0, 0) rotate(0deg); } to { transform: translate3d(-20px, 16px, -30px) rotate(-6deg); } }
-@keyframes drift-c { from { transform: translate3d(0, 0, 0) rotate(0deg); } to { transform: translate3d(14px, 20px, 24px) rotate(10deg); } }
+.hero-depth .ridge { position: absolute; left: 0; right: 0; bottom: 0; height: 62%; will-change: transform; }
+.hero-depth .ridge svg { display: block; width: 100%; height: 100%; }
+.hero-depth .ridge.r-back { height: 46%; opacity: 0.5; }
+.hero-depth .ridge.r-back svg { animation: mountain-drift 38s ease-in-out infinite alternate; }
+.hero-depth .ridge.r-mid { height: 54%; opacity: 0.75; }
+.hero-depth .ridge.r-mid svg { animation: mountain-drift 30s ease-in-out infinite alternate-reverse; }
+.hero-depth .ridge.r-front { height: 62%; }
+.hero-depth .sun { position: absolute; right: 12%; top: 10%; width: 84px; height: 84px; border-radius: 50%; background: var(--ember); opacity: 0.9; animation: sun-drift 32s ease-in-out infinite alternate; will-change: transform; }
+.hero-depth .fog { position: absolute; left: -10%; right: -10%; bottom: 18%; height: 90px; opacity: 0.4; animation: fog-drift 46s ease-in-out infinite alternate; will-change: transform; }
+.hero-depth .fog svg { display: block; width: 100%; height: 100%; }
+@keyframes mountain-drift { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-14px, -6px, 20px); } }
+@keyframes sun-drift { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(0, 10px, 0); } }
+@keyframes fog-drift { from { transform: translate3d(-4%, 0, 0); } to { transform: translate3d(4%, 0, 0); } }
+/* Parallax scroll (hanya bila browser dukung scroll-driven animations):
+   punggung jauh bergerak pelan, punggung dekat bergerak cepat. Dekoratif,
+   jadi tanpa fallback JS; tanpa dukungan, lapisan diam di tempat. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports ((animation-timeline: view()) and (animation-range: entry)) {
+    .hero-depth .ridge.r-back { --offset: 40px; }
+    .hero-depth .ridge.r-mid { --offset: 90px; }
+    .hero-depth .ridge.r-front { --offset: 150px; }
+    .hero-depth .ridge { animation: mountain-parallax linear both; animation-timeline: --hero; animation-range: exit 0% exit 100%; }
+    @keyframes mountain-parallax { from { transform: translateY(0); } to { transform: translateY(var(--offset)); } }
+    /* Hero ikut bergerak saat scroll: headline naik dan memudar halus. */
+    .hero-top { animation: hero-leave linear both; animation-timeline: --hero; animation-range: exit 0% exit 70%; }
+    @keyframes hero-leave { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-32px); } }
+  }
+}
+/* Tombol jeda animasi hero (WCAG 2.2.2 Pause, Stop, Hide): animasi
+   latar berjalan terus, pengguna harus bisa mematikannya. */
+.hero-motion-toggle { position: absolute; right: 16px; top: 16px; z-index: 3; background: var(--surface); }
+.hero-depth.paused .ridge svg, .hero-depth.paused .sun, .hero-depth.paused .fog { animation-play-state: paused; }
 
 /* Layar loading 3D: mark berputar masuk, huruf merangkai, lalu memudar. */
 .intro-loader { position: fixed; inset: 0; z-index: 100; background: var(--pine); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; cursor: pointer; transition: opacity 320ms var(--ease-out); }
@@ -225,15 +277,16 @@ img { display: block; max-width: 100%; }
   background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
   color: var(--ink); padding: 20px; display: grid; grid-template-columns: 1fr 1fr auto; gap: 16px;
   align-items: flex-end; box-shadow: var(--shadow-1);
-  transition: transform var(--dur-med) var(--ease-out), box-shadow var(--dur-med) var(--ease-out);
+  transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-med) var(--ease-out);
 }
-.date-picker:focus-within { transform: translateY(-2px); box-shadow: var(--shadow-2); }
+.date-picker:focus-within { border-color: var(--ink); box-shadow: var(--shadow-1); }
 .date-picker label { display: block; font-weight: 700; font-size: 15px; margin-bottom: 6px; }
 .date-picker input[type="date"] {
   width: 100%; font: inherit; padding: 10px; border: 1px solid var(--line);
-  border-radius: var(--radius-sm); background: var(--surface); color: var(--ink);
+  border-radius: var(--radius-btn); background: var(--surface); color: var(--ink);
   transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
 }
+.date-picker input[type="date"]:hover { border-color: var(--ink-soft); }
 .date-picker input[type="date"]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(228, 87, 30, 0.25); outline: none; }
 .date-picker .days { font-weight: 700; align-self: center; }
 
@@ -251,9 +304,10 @@ img { display: block; max-width: 100%; }
 .cat-cell {
   position: relative; display: block; aspect-ratio: 4 / 5; text-decoration: none;
   border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-1);
-  transition: transform var(--dur-med) var(--ease-out), box-shadow var(--dur-med) var(--ease-out);
+  transition: box-shadow var(--dur-med) var(--ease-out);
 }
-.cat-cell:hover { transform: translateY(-4px); box-shadow: var(--shadow-3); }
+.cat-cell:hover { box-shadow: var(--shadow-1); }
+.cat-cell:hover .cat-label { border-color: var(--ink); }
 .cat-cell img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 600ms var(--ease-out); }
 .cat-cell:hover img { transform: scale(1.07); }
 .cat-label {
@@ -270,9 +324,10 @@ img { display: block; max-width: 100%; }
 .card {
   background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
   display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--shadow-1); height: 100%;
-  transition: transform var(--dur-med) var(--ease-out), box-shadow var(--dur-med) var(--ease-out);
+  transition: border-color var(--dur-fast) var(--ease-out);
 }
-.card:hover { transform: translateY(-6px); box-shadow: var(--shadow-3); }
+/* Hover kartu: garis tepi menggelap, bukan naik dan bayangan generik. */
+.card:hover { border-color: var(--ink); }
 .card-media { position: relative; display: block; aspect-ratio: 4 / 3; overflow: hidden; background: var(--ground-2); }
 .card-img { object-fit: cover; transition: transform 600ms var(--ease-out); }
 .card:hover .card-img { transform: scale(1.06); }
@@ -305,10 +360,10 @@ img { display: block; max-width: 100%; }
 .step {
   padding: 32px; border: 1px solid var(--line); border-radius: var(--radius);
   background: var(--surface); box-shadow: var(--shadow-1); position: relative; overflow: hidden;
-  transition: transform var(--dur-med) var(--ease-out), box-shadow var(--dur-med) var(--ease-out);
+  transition: border-color var(--dur-fast) var(--ease-out);
 }
 .step::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 5px; background: var(--ember); }
-.step:hover { transform: translateY(-4px); box-shadow: var(--shadow-2); }
+.step:hover { border-color: var(--ink); }
 .step h3 { font-size: 24px; margin-bottom: 10px; }
 .step p { color: var(--ink-soft); }
 
@@ -320,11 +375,19 @@ img { display: block; max-width: 100%; }
 
 /* Detail alat: galeri kiri sekitar 55 persen, info kanan. Foto dibatasi
    rasio 4/3 dan align-self start, supaya tidak pernah meregang setinggi
-   kolom info dan memenuhi viewport. */
+   kolom info dan memenuhi viewport. Keterangan sewa pindah ke kolom kiri
+   di bawah foto, supaya kedua kolom seimbang dan tidak ada ruang kosong
+   besar di bawah foto. */
 .detail { display: grid; grid-template-columns: 7fr 6fr; gap: 40px; padding: 32px 0 96px; align-items: start; }
+.detail-col { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
 .detail-media { position: relative; aspect-ratio: 4 / 3; background: var(--ground-2); border-radius: var(--radius); overflow: hidden; }
 .detail-media img { object-fit: cover; transition: transform 600ms var(--ease-out); }
 .detail-media:hover img { transform: scale(1.04); }
+.detail-notes { border: 1px solid var(--line); background: var(--surface); border-radius: var(--radius); padding: 24px; }
+.detail-notes h2 { font-size: 24px; font-weight: 800; margin-bottom: 16px; }
+.detail-notes ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+.detail-notes li strong { display: block; font-size: 16px; margin-bottom: 2px; }
+.detail-notes li p { color: var(--ink-soft); font-size: 15px; }
 .detail-info h1 { font-size: clamp(32px, 3.6vw, 48px); font-weight: 900; margin-bottom: 12px; }
 .detail-info .desc { color: var(--ink-soft); font-size: 18px; margin-bottom: 24px; }
 
@@ -335,15 +398,15 @@ img { display: block; max-width: 100%; }
 .review-card .stars { color: var(--ember); font-weight: 800; letter-spacing: 0.08em; }
 .review-card p { color: var(--ink-soft); }
 .price-block {
-  border: 1px solid var(--line); background: var(--surface); padding: 24px;
-  display: flex; flex-direction: column; gap: 16px; border-radius: var(--radius); box-shadow: var(--shadow-2);
+  border: 1px solid var(--line); background: var(--surface); padding: 20px;
+  display: flex; flex-direction: column; gap: 12px; border-radius: var(--radius); box-shadow: var(--shadow-2);
 }
 .price-row { display: flex; justify-content: space-between; gap: 16px; font-size: 18px; }
 .price-row strong { font-size: 28px; font-variant-numeric: tabular-nums; }
 .qty-row { display: flex; align-items: center; gap: 12px; }
 .qty-row button {
   width: 44px; height: 44px; font-size: 22px; font-weight: 800; background: var(--ground-2);
-  border: 1px solid var(--line); border-radius: var(--radius-sm); cursor: pointer; color: var(--ink);
+  border: 1px solid var(--line); border-radius: var(--radius-btn); cursor: pointer; color: var(--ink);
   transition: transform var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
 }
 .qty-row button:hover { background: var(--mist); }
@@ -354,11 +417,13 @@ img { display: block; max-width: 100%; }
 .form { display: flex; flex-direction: column; gap: 16px; max-width: 520px; }
 .form label { font-weight: 700; display: block; margin-bottom: 6px; }
 .form input, .form select, .form textarea {
-  width: 100%; font: inherit; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius-sm);
+  width: 100%; font: inherit; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius-btn);
   background: var(--surface); color: var(--ink);
   transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
 }
+.form input:hover, .form select:hover, .form textarea:hover { border-color: var(--ink-soft); }
 .form input:focus, .form select:focus, .form textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(228, 87, 30, 0.22); outline: none; }
+.form input:disabled, .form select:disabled, .form textarea:disabled { background: var(--ground-2); color: var(--ink-soft); cursor: not-allowed; }
 .form .hint { font-size: 14px; color: var(--ink-soft); font-weight: 400; }
 .form-error { background: #fbe9e7; color: var(--bad); border: 1px solid var(--bad); padding: 12px 16px; font-weight: 600; border-radius: var(--radius-sm); }
 @media (prefers-color-scheme: dark) { .form-error { background: #3a1713; } }
@@ -372,10 +437,11 @@ img { display: block; max-width: 100%; }
 .filters { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 32px; }
 .filters label { font-weight: 700; font-size: 15px; display: block; margin-bottom: 6px; }
 .filters input, .filters select {
-  font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius-sm);
+  font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius-btn);
   background: var(--surface); color: var(--ink); min-width: 200px;
   transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
 }
+.filters input:hover, .filters select:hover { border-color: var(--ink-soft); }
 .filters input:focus, .filters select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(228, 87, 30, 0.22); outline: none; }
 .filters .search { flex: 1; min-width: 220px; }
 
@@ -405,9 +471,9 @@ tbody tr:hover { background: var(--ground-2); }
   display: grid; grid-template-columns: 120px 1fr auto; gap: 20px; border: 1px solid var(--line);
   background: var(--surface); padding: 16px; margin-bottom: 16px; align-items: center;
   border-radius: var(--radius); box-shadow: var(--shadow-1);
-  transition: transform var(--dur-med) var(--ease-out), box-shadow var(--dur-med) var(--ease-out);
+  transition: border-color var(--dur-fast) var(--ease-out);
 }
-.cart-item:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); }
+.cart-item:hover { border-color: var(--ink); }
 .cart-thumb { position: relative; width: 120px; height: 90px; background: var(--ground-2); border-radius: var(--radius-sm); overflow: hidden; }
 .cart-thumb img { object-fit: cover; }
 .summary {
@@ -422,23 +488,25 @@ tbody tr:hover { background: var(--ground-2); }
 .empty p { color: var(--ink-soft); margin-bottom: 24px; }
 
 /* Admin */
+/* Tab admin: segmented control satu sistem dengan tombol (radius 4px,
+   isi datar). Aktif: pine datar, bukan gradien. */
 .admin-tabs { display: flex; gap: 8px; margin-bottom: 32px; flex-wrap: wrap; }
 .admin-tabs button {
-  flex: 1; padding: 14px; font: inherit; font-weight: 700; background: var(--surface); color: var(--ink-soft);
-  border: 1px solid var(--line); border-radius: 999px; cursor: pointer; min-width: 120px;
-  transition: transform var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+  flex: 1; min-height: 44px; padding: 12px 14px; font: inherit; font-weight: 700; background: var(--surface); color: var(--ink-soft);
+  border: 1px solid var(--line); border-radius: var(--radius-btn); cursor: pointer; min-width: 120px;
+  transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
 }
-.admin-tabs button:hover { transform: translateY(-2px); box-shadow: var(--shadow-1); }
-.admin-tabs button:active { transform: scale(0.97); }
-.admin-tabs button.active { background: var(--grad-forest); color: var(--ground); border-color: transparent; box-shadow: var(--shadow-2); }
+.admin-tabs button:hover { background: var(--ground-2); color: var(--ink); }
+.admin-tabs button:active { transform: translateY(1px); }
+.admin-tabs button.active { background: var(--pine); color: var(--ground); border-color: var(--pine); }
 .stat-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 32px; }
 .stat {
   padding: 24px; border: 1px solid var(--line); border-radius: var(--radius);
   background: var(--surface); box-shadow: var(--shadow-1); position: relative; overflow: hidden;
-  transition: transform var(--dur-med) var(--ease-out), box-shadow var(--dur-med) var(--ease-out);
+  transition: border-color var(--dur-fast) var(--ease-out);
 }
 .stat::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 5px; background: var(--ember); }
-.stat:hover { transform: translateY(-4px); box-shadow: var(--shadow-2); }
+.stat:hover { border-color: var(--ink); }
 .stat strong { display: block; font-size: 36px; font-weight: 900; font-variant-numeric: tabular-nums; }
 .stat span { color: var(--ink-soft); }
 
@@ -462,28 +530,41 @@ tbody tr:hover { background: var(--ground-2); }
 @media (prefers-reduced-motion: no-preference) {
   .hero-media img { animation: hero-zoom 16s var(--ease-out) both; }
   /* Scroll reveal: hanya bila browser dukung animation-timeline, kalau tidak
-     konten tetap terlihat penuh tanpa animasi. */
+     konten tetap terlihat penuh tanpa animasi. Section masuk dengan naik
+     dan memudar; anak grid (kategori, alat, langkah, ulasan) menyusul
+     dengan stagger lewat animation-range yang sama. */
   @supports (animation-timeline: view()) {
     .reveal { animation: rise 0.6s var(--ease-out) both; animation-timeline: view(); animation-range: entry 0% entry 65%; }
-    .eq-grid > * { animation: card-in 0.5s var(--ease-out) both; animation-timeline: view(); animation-range: entry 0% entry 40%; }
+    .eq-grid > *, .cat-grid > *, .steps > *, .review-grid > * { animation: card-in 0.5s var(--ease-out) both; animation-timeline: view(); animation-range: entry 0% entry 40%; }
   }
 }
 @media (prefers-reduced-motion: reduce) {
   .rise { animation: none; }
-  .hero-depth, .intro-loader { display: none; }
+  .intro-loader { display: none; }
+  /* Gunung tetap tampil sebagai lapisan statis, tanpa gerakan. */
+  .hero-depth .ridge, .hero-depth .ridge svg, .hero-depth .sun, .hero-depth .fog { animation: none; }
+  .hero-motion-toggle { display: none; }
   * { scroll-behavior: auto; }
 }
 
 /* Responsif */
 @media (max-width: 900px) {
-  .hero-top { padding-top: 48px; padding-bottom: 32px; }
+  .hero-top { padding-top: 56px; padding-bottom: 32px; }
   .hero-media { height: 320px; }
   .hero-bar { margin-top: -48px; padding-bottom: 48px; }
-  .hero-depth .hero-shape:nth-child(n + 3) { display: none; }
+  .hero-depth .ridge.r-back, .hero-depth .fog { display: none; }
+  .hero-depth .sun { width: 56px; height: 56px; right: 8%; }
   .header-search { order: 3; flex-basis: 100%; max-width: none; }
   .cat-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .eq-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .detail, .cart-layout { grid-template-columns: 1fr; }
+  /* Detail di layar kecil: foto, info, lalu keterangan. Kolom kiri
+     dilebur (display contents) supaya urutan bisa diatur ulang. */
+  .detail { display: flex; flex-direction: column; }
+  .detail-col { display: contents; }
+  .detail-media { order: 1; }
+  .detail-info { order: 2; }
+  .detail-notes { order: 3; }
+  .cart-layout { grid-template-columns: 1fr; }
   .review-grid { grid-template-columns: 1fr; }
   .steps { grid-template-columns: 1fr; }
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
@@ -497,7 +578,7 @@ tbody tr:hover { background: var(--ground-2); }
   .section { padding: 64px 0; }
   .cart-item { grid-template-columns: 1fr; }
   .cart-thumb { width: 100%; height: 160px; }
-  .hero-top { padding-top: 40px; }
+  .hero-top { padding-top: 56px; }
   .hero-media { height: 260px; }
   .hero-bar { margin-top: -40px; }
 }
@@ -525,7 +606,7 @@ tbody tr:hover { background: var(--ground-2); }
   transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
 }
 .app-nav a:hover { background: rgba(255, 255, 255, 0.12); transform: translateX(2px); }
-.app-nav a.active { background: var(--grad-ember); color: var(--accent-ink); box-shadow: var(--shadow-ember); }
+.app-nav a.active { background: var(--accent); color: #ffffff; }
 .app-sidebar-foot { margin-top: auto; display: flex; flex-direction: column; gap: 8px; padding-top: 24px; border-top: 1px solid #2c4636; }
 .app-side-link { background: none; border: 0; padding: 0; font: inherit; font-weight: 600; color: #dfe8dd; text-decoration: none; text-align: left; cursor: pointer; transition: color var(--dur-fast) var(--ease-out); }
 .app-side-link:hover { color: var(--ember); }

@@ -47,7 +47,7 @@ export default async function HomePage() {
             Ambil, pakai, kembalikan. Deposit kembali utuh bila alat kembali baik.
           </p>
           <div className="hero-cta">
-            <Link href="/katalog" className="btn btn-primary">Lihat Semua Alat</Link>
+            <Link href="/katalog" className="btn btn-primary btn-lg">Lihat Semua Alat</Link>
             <Link href="/daftar" className="btn btn-ghost">Buat Akun</Link>
           </div>
         </div>
