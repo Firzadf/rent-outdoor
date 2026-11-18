@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth";
@@ -29,10 +29,26 @@ export function SiteHeader() {
   const [query, setQuery] = useState("");
   const [categories, setCategories] = useState<Category[]>(SEED_CATEGORIES);
   const [activeCat, setActiveCat] = useState("semua");
+  // Header sembunyi saat scroll ke bawah, muncul lagi saat scroll ke
+  // atas (hide on scroll down, show on scroll up). Ambang 140px supaya
+  // goyangan kecil tidak menyembunyikan header. Transform, bukan
+  // display, jadi konten tidak lompat. Menu akun ikut tertutup saat
+  // header bersembunyi.
+  const [headerHidden, setHeaderHidden] = useState(false);
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
     function onScroll() {
-      setScrolled(window.scrollY > 12);
+      const y = window.scrollY;
+      const last = lastScrollY.current;
+      setScrolled(y > 12);
+      if (y > 140 && y > last) {
+        setHeaderHidden(true);
+        setMenuOpen(false);
+      } else if (y < last || y <= 140) {
+        setHeaderHidden(false);
+      }
+      lastScrollY.current = y;
     }
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -78,7 +94,7 @@ export function SiteHeader() {
   }
 
   return (
-    <header className={`site-header${scrolled ? " scrolled" : ""}`}>
+    <header className={`site-header${scrolled ? " scrolled" : ""}${headerHidden ? " header-hidden" : ""}`}>
       <div className="wrap header-inner">
         <Link href="/" className="wordmark">
           <LogoMark size={32} />
@@ -96,8 +112,35 @@ export function SiteHeader() {
           <button type="submit" className="btn btn-primary btn-small">Cari</button>
         </form>
         <div className="header-actions">
-          <Link href="/keranjang" className="cart-link">
-            Keranjang{count > 0 ? ` (${count})` : ""}
+          <Link
+            href="/keranjang"
+            className="cart-link"
+            aria-label={count > 0 ? `Keranjang, ${count} alat` : "Keranjang"}
+          >
+            <svg
+              className="cart-icon"
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="9" cy="21" r="1" />
+              <circle cx="20" cy="21" r="1" />
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+            </svg>
+            <span className="cart-label">
+              Keranjang{count > 0 ? ` (${count})` : ""}
+            </span>
+            {count > 0 && (
+              <span className="cart-badge" aria-hidden="true">
+                {count > 99 ? "99+" : count}
+              </span>
+            )}
           </Link>
           {isCustomer && (
             <div className="account-menu">
@@ -127,14 +170,14 @@ export function SiteHeader() {
           )}
           {isStaff && !loading && (
             <>
-              <Link href="/profil" className="btn btn-ghost">{displayName}</Link>
+              <Link href="/profil" className="btn btn-ghost header-user-name">{displayName}</Link>
               <button type="button" className="btn btn-ghost" onClick={() => void signOut()}>Keluar</button>
             </>
           )}
           {!loading && !user && (
             <>
               <Link href="/masuk" className="btn btn-primary">Masuk</Link>
-              <Link href="/daftar" className="btn btn-ghost">Daftar</Link>
+              <Link href="/daftar" className="btn btn-ghost header-signup">Daftar</Link>
             </>
           )}
         </div>
