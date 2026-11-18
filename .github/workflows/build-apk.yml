@@ -1,0 +1,68 @@
+# Build APK debug OutdoorRent (Flutter + Supabase) di GitHub Actions.
+#
+# Dipakai karena build lokal di mesin Muse gagal: plugin Android
+# (AGP 8.7.3) tidak bisa diunduh lewat proxy mesin itu.
+#
+# Trigger: manual (workflow_dispatch) atau push ke main yang menyentuh
+# folder rental_outdoor/.
+#
+# Kunci anon Supabase diambil dari secret repo SUPABASE_ANON_KEY
+# (Settings > Secrets and variables > Actions). Bila secret belum
+# dipasang, build TETAP jalan dengan placeholder, supaya APK tetap
+# terbentuk; APK itu belum bisa login/memanggil Supabase sampai
+# secret dipasang dan workflow dijalankan ulang.
+name: Build APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'rental_outdoor/**'
+
+jobs:
+  build-apk:
+    name: Build APK debug
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: rental_outdoor
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Flutter stable
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Flutter analyze
+        run: flutter analyze
+
+      - name: Build APK debug
+        run: |
+          ANON_KEY="${{ secrets.SUPABASE_ANON_KEY }}"
+          if [ -z "$ANON_KEY" ]; then
+            echo "::warning::Secret SUPABASE_ANON_KEY belum dipasang. Build memakai placeholder, APK belum bisa live."
+            ANON_KEY="SUPABASE_ANON_KEY_BELUM_DIISI"
+          else
+            echo "Secret SUPABASE_ANON_KEY terisi, build memakai anon key dari secret."
+          fi
+          flutter build apk --debug --dart-define=SUPABASE_ANON_KEY="$ANON_KEY"
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug
+          path: rental_outdoor/build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 7
