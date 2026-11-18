@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/network/api_exception.dart';
 import '../../../core/widgets/app_button.dart';
+import '../../../core/widgets/depth.dart';
 import 'auth_controller.dart';
 
 /// Halaman masuk (customer & admin).
@@ -98,12 +99,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Icon(
-                      Icons.forest_outlined,
-                      size: 64,
-                      color: theme.colorScheme.primary,
+                    const GradientIconBadge(
+                      icon: Icons.forest_outlined,
+                      size: 72,
+                      iconSize: 36,
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 16),
                     Text(
                       'Masuk',
                       textAlign: TextAlign.center,

@@ -12,6 +12,7 @@ import '../../booking/domain/booking.dart';
 import '../../booking/presentation/booking_status_style.dart';
 import '../domain/admin_booking.dart';
 import 'admin_providers.dart';
+import '../../../core/widgets/depth.dart';
 
 /// Chip filter status daftar pesanan admin (`null` = Semua).
 ///
@@ -263,7 +264,7 @@ class _AdminBookingsPageState extends ConsumerState<AdminBookingsPage> {
     final theme = Theme.of(context);
     final style = bookingStatusStyle(context, booking.status);
 
-    return Card(
+    return DepthCard(
       margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
       child: InkWell(

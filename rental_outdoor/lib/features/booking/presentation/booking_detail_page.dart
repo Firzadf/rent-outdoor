@@ -17,6 +17,7 @@ import '../data/booking_repository.dart';
 import '../domain/booking.dart';
 import 'booking_status_style.dart';
 import 'bookings_provider.dart';
+import '../../../core/widgets/depth.dart';
 
 /// Detail satu pesanan `GET /bookings/{id}`: rincian biaya, riwayat
 /// pembayaran, tombol aksi sesuai status, dan (untuk `completed`) form
@@ -219,7 +220,7 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
     final theme = Theme.of(context);
     final style = bookingStatusStyle(context, booking.status);
 
-    return Card(
+    return DepthCard(
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -327,7 +328,7 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
     final theme = Theme.of(context);
     final reviewState = ref.watch(bookingReviewProvider(booking.id));
 
-    return Card(
+    return DepthCard(
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -453,7 +454,7 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
     final theme = Theme.of(context);
     final completed = booking.status == BookingStatus.completed;
 
-    return Card(
+    return DepthCard(
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -556,7 +557,7 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
     final payments = [...booking.payments]
       ..sort((a, b) => b.id.compareTo(a.id));
 
-    return Card(
+    return DepthCard(
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(16),

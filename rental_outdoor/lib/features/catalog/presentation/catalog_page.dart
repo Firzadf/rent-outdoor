@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/widgets/depth.dart';
 import '../../../core/widgets/empty_view.dart';
 import '../../../core/widgets/error_view.dart';
 import '../../../core/widgets/loading_view.dart';
@@ -353,9 +354,14 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
             delegate: SliverChildBuilderDelegate(
               (context, index) {
                 final equipment = data.items[index];
-                return EquipmentGridCard(
-                  equipment: equipment,
-                  onTap: () => context.push('/equipment/${equipment.id}'),
+                return FadeSlideIn(
+                  // Stagger per kolom saja supaya rebuild halaman
+                  // berikutnya tidak mengulang animasi semua kartu.
+                  delay: Duration(milliseconds: 50 * (index % 2)),
+                  child: EquipmentGridCard(
+                    equipment: equipment,
+                    onTap: () => context.push('/equipment/${equipment.id}'),
+                  ),
                 );
               },
               childCount: data.items.length,

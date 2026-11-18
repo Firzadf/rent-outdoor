@@ -86,12 +86,18 @@ void main() {
 
   testWidgets('tanggal valid -> estimasi tampil + checkout aktif',
       (tester) async {
+    // Tanggal relatif terhadap hari ini: tanggal tetap (1-3 Nov 2026)
+    // sudah lewat saat test dijalankan 18 Nov 2026, sehingga
+    // hasValidRange false dan estimasi tidak tampil.
+    final today = DateTime.now();
+    final pickup = DateTime(today.year, today.month, today.day)
+        .add(const Duration(days: 7));
     await pumpCart(
       tester,
       CartState(
         items: const [item],
-        pickupDate: DateTime(2026, 11, 1),
-        returnDate: DateTime(2026, 11, 3),
+        pickupDate: pickup,
+        returnDate: pickup.add(const Duration(days: 2)),
       ),
     );
 

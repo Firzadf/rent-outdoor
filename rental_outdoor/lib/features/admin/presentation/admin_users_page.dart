@@ -10,6 +10,7 @@ import '../../../core/widgets/loading_view.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../data/admin_repository.dart';
 import '../domain/admin_user.dart';
+import '../../../core/widgets/depth.dart';
 
 /// Halaman kelola pengguna admin.
 ///
@@ -261,7 +262,7 @@ class _AdminUsersPageState extends ConsumerState<AdminUsersPage> {
                                 final user = _users[i];
                                 final isSelf = user.id == currentUserId;
 
-                                return Card(
+                                return DepthCard(
                                   child: ListTile(
                                     leading: CircleAvatar(
                                       backgroundColor:

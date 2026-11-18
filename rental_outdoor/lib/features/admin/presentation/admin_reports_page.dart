@@ -8,6 +8,7 @@ import '../../../core/widgets/error_view.dart';
 import '../../../core/widgets/loading_view.dart';
 import '../data/admin_repository.dart';
 import '../domain/admin_report.dart';
+import '../../../core/widgets/depth.dart';
 
 /// Halaman laporan admin — pendapatan dan laporan alat.
 class AdminReportsPage extends ConsumerStatefulWidget {
@@ -312,7 +313,7 @@ class _AdminReportsPageState extends ConsumerState<AdminReportsPage>
     return Row(
       children: [
         Expanded(
-          child: Card(
+          child: DepthCard(
             color: theme.colorScheme.primaryContainer,
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -340,7 +341,7 @@ class _AdminReportsPageState extends ConsumerState<AdminReportsPage>
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: Card(
+          child: DepthCard(
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -447,7 +448,7 @@ class _AdminReportsPageState extends ConsumerState<AdminReportsPage>
           ),
         ),
         const SizedBox(height: 8),
-        Card(
+        DepthCard(
           clipBehavior: Clip.antiAlias,
           child: Table(
             columnWidths: const {
@@ -539,7 +540,7 @@ class _AdminReportsPageState extends ConsumerState<AdminReportsPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Card(
+          DepthCard(
             color: Theme.of(context).colorScheme.primaryContainer,
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -568,7 +569,7 @@ class _AdminReportsPageState extends ConsumerState<AdminReportsPage>
             ),
           ),
           const SizedBox(height: 16),
-          Card(
+          DepthCard(
             clipBehavior: Clip.antiAlias,
             child: Table(
               columnWidths: const {

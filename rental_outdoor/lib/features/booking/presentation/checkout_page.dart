@@ -12,6 +12,7 @@ import '../../catalog/data/catalog_repository.dart';
 import '../../cart/domain/cart_item.dart';
 import '../../cart/presentation/cart_provider.dart';
 import '../data/booking_repository.dart';
+import '../../../core/widgets/depth.dart';
 
 /// Ringkasan pesanan sebelum dibuat: item, tanggal sewa, estimasi biaya,
 /// catatan opsional, dan tombol "Buat Pesanan" (`POST /bookings`).
@@ -206,7 +207,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
       children: [
         _sectionTitle(context, 'Item Sewa'),
         const SizedBox(height: 8),
-        Card(
+        DepthCard(
           margin: EdgeInsets.zero,
           child: Padding(
             padding: const EdgeInsets.all(12),
@@ -225,7 +226,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
         // ---- Tanggal sewa ----
         _sectionTitle(context, 'Tanggal Sewa'),
         const SizedBox(height: 8),
-        Card(
+        DepthCard(
           margin: EdgeInsets.zero,
           child: ListTile(
             leading: const Icon(Icons.event_available_outlined),
@@ -263,7 +264,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
         const SizedBox(height: 8),
 
         // ---- Estimasi ----
-        Card(
+        DepthCard(
           margin: EdgeInsets.zero,
           child: Padding(
             padding: const EdgeInsets.all(16),

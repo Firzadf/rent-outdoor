@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/depth.dart';
 import '../../../core/widgets/loading_view.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../../catalog/domain/category.dart';
@@ -60,8 +62,51 @@ class HomePage extends ConsumerWidget {
                   style: theme.textTheme.bodyMedium
                       ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
               ],
+
+              // ---- Hero 3D: panel gradien hijau hutan ----
+              FadeSlideIn(
+                child: HeroPanel(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(
+                        Icons.terrain,
+                        color: Colors.white,
+                        size: 32,
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Siap mendaki akhir pekan ini?',
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Sewa tenda, carrier, dan alat outdoor lain, '
+                        'langsung dari HP.',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: Colors.white.withValues(alpha: 0.85),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      FilledButton.icon(
+                        onPressed: () => context.go('/catalog'),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.orangeAccent,
+                          foregroundColor: Colors.white,
+                        ),
+                        icon: const Icon(Icons.explore_outlined),
+                        label: const Text('Lihat Katalog'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
 
               // ---- Kategori ----
               _sectionTitle(context, 'Kategori'),
@@ -187,12 +232,16 @@ class HomePage extends ConsumerWidget {
           return ListView(
             scrollDirection: Axis.horizontal,
             children: [
-              for (final equipment in items)
+              for (var i = 0; i < items.length; i++)
                 Padding(
                   padding: const EdgeInsets.only(right: 12),
-                  child: EquipmentPopularCard(
-                    equipment: equipment,
-                    onTap: () => context.push('/equipment/${equipment.id}'),
+                  child: FadeSlideIn(
+                    delay: Duration(milliseconds: 60 * i),
+                    child: EquipmentPopularCard(
+                      equipment: items[i],
+                      onTap: () =>
+                          context.push('/equipment/${items[i].id}'),
+                    ),
                   ),
                 ),
             ],

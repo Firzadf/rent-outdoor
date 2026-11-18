@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/network/api_exception.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/utils/image_upload.dart';
 import '../../../core/utils/image_url.dart';
@@ -18,6 +19,7 @@ import '../domain/availability.dart';
 import '../domain/equipment.dart';
 import '../domain/review.dart';
 import 'equipment_detail_provider.dart';
+import '../../../core/widgets/depth.dart';
 
 /// Detail alat `GET /equipments/{id}`: galeri, info, cek ketersediaan,
 /// dan ulasan terbaru.
@@ -195,7 +197,7 @@ class _EquipmentDetailPageState extends ConsumerState<EquipmentDetailPage> {
       physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.only(bottom: 32),
       children: [
-        _buildGallery(detail),
+        FadeSlideIn(child: _buildGallery(detail)),
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
           child: Column(
@@ -243,7 +245,7 @@ class _EquipmentDetailPageState extends ConsumerState<EquipmentDetailPage> {
               const SizedBox(height: 16),
 
               // ---- Harga / deposit / stok ----
-              Card(
+              DepthCard(
                 margin: EdgeInsets.zero,
                 child: Padding(
                   padding: const EdgeInsets.all(16),
@@ -307,8 +309,16 @@ class _EquipmentDetailPageState extends ConsumerState<EquipmentDetailPage> {
     final theme = Theme.of(context);
     final urls = _galleryUrls(detail);
 
-    return AspectRatio(
-      aspectRatio: 16 / 10,
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: AppShadows.floating(Theme.of(context).colorScheme),
+      ),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.vertical(
+          bottom: Radius.circular(24),
+        ),
+        child: AspectRatio(
+          aspectRatio: 16 / 10,
       child: urls.isEmpty
           ? ColoredBox(
               color: theme.colorScheme.surfaceContainerHighest,
@@ -373,6 +383,8 @@ class _EquipmentDetailPageState extends ConsumerState<EquipmentDetailPage> {
                   ),
               ],
             ),
+        ),
+      ),
     );
   }
 
@@ -429,7 +441,7 @@ class _EquipmentDetailPageState extends ConsumerState<EquipmentDetailPage> {
     final range = _range;
     final available = _availability;
 
-    return Card(
+    return DepthCard(
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -735,7 +747,7 @@ class _EquipmentDetailPageState extends ConsumerState<EquipmentDetailPage> {
     final theme = Theme.of(context);
     final url = resolveImageUrl(review.profileImage);
 
-    return Card(
+    return DepthCard(
       margin: const EdgeInsets.only(bottom: 8),
       child: Padding(
         padding: const EdgeInsets.all(12),

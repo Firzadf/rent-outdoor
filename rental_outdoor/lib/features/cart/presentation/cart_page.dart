@@ -12,6 +12,7 @@ import '../../../core/widgets/error_view.dart';
 import '../../../core/widgets/loading_view.dart';
 import '../domain/cart_item.dart';
 import 'cart_provider.dart';
+import '../../../core/widgets/depth.dart';
 
 /// Tab Keranjang: item + pemilih jumlah, satu tanggal sewa untuk semua
 /// item, dan estimasi biaya (client-side, lihat API_DOCS.md).
@@ -128,7 +129,7 @@ class CartPage extends ConsumerWidget {
     final back = state.returnDate;
     final valid = state.hasValidRange;
 
-    return Card(
+    return DepthCard(
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -226,7 +227,7 @@ class CartPage extends ConsumerWidget {
     final url = resolveImageUrl(item.imageUrl);
     final canIncrease = item.quantity < item.stock;
 
-    return Card(
+    return DepthCard(
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -423,7 +424,7 @@ class CartPage extends ConsumerWidget {
     final theme = Theme.of(context);
     final totals = state.totals;
 
-    return Card(
+    return DepthCard(
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(16),

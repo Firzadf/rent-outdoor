@@ -10,6 +10,7 @@ import '../../../core/widgets/loading_view.dart';
 import '../../../core/widgets/rating_stars.dart';
 import '../domain/review.dart';
 import 'equipment_reviews_provider.dart';
+import '../../../core/widgets/depth.dart';
 
 /// Semua ulasan satu alat (`GET /equipments/{id}/reviews`) —
 /// daftar berpaginasi dengan infinite scroll + pull-to-refresh.
@@ -171,7 +172,7 @@ class _EquipmentReviewsPageState extends ConsumerState<EquipmentReviewsPage> {
     final theme = Theme.of(context);
     final url = resolveImageUrl(review.profileImage);
 
-    return Card(
+    return DepthCard(
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(12),

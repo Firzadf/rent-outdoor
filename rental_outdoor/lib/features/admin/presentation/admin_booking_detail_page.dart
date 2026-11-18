@@ -15,6 +15,7 @@ import '../data/admin_repository.dart';
 import '../domain/admin_booking.dart';
 import 'admin_complete_input.dart';
 import 'admin_providers.dart';
+import '../../../core/widgets/depth.dart';
 
 /// Detail pesanan admin (`GET /admin/bookings/{id}`): data pelanggan,
 /// alat, rincian biaya, semua pembayaran (bukti bisa diperbesar), dan
@@ -362,7 +363,7 @@ class _AdminBookingDetailPageState extends ConsumerState<AdminBookingDetailPage>
     final theme = Theme.of(context);
     final style = bookingStatusStyle(context, booking.status);
 
-    return Card(
+    return DepthCard(
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -475,7 +476,7 @@ class _AdminBookingDetailPageState extends ConsumerState<AdminBookingDetailPage>
   Widget _customerCard(AdminBooking booking) {
     final theme = Theme.of(context);
 
-    return Card(
+    return DepthCard(
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -508,7 +509,7 @@ class _AdminBookingDetailPageState extends ConsumerState<AdminBookingDetailPage>
   Widget _itemsCard(AdminBooking booking) {
     final theme = Theme.of(context);
 
-    return Card(
+    return DepthCard(
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -603,7 +604,7 @@ class _AdminBookingDetailPageState extends ConsumerState<AdminBookingDetailPage>
     final theme = Theme.of(context);
     final completed = booking.isCompleted;
 
-    return Card(
+    return DepthCard(
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -708,7 +709,7 @@ class _AdminBookingDetailPageState extends ConsumerState<AdminBookingDetailPage>
     final payments = [...booking.payments]
       ..sort((a, b) => b.id.compareTo(a.id));
 
-    return Card(
+    return DepthCard(
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(16),

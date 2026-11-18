@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/network/api_exception.dart';
 import '../../../core/widgets/app_button.dart';
+import '../../../core/widgets/depth.dart';
 import 'auth_controller.dart';
 
 /// Halaman pendaftaran akun customer.
@@ -135,6 +136,14 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    const Center(
+                      child: GradientIconBadge(
+                        icon: Icons.person_add_outlined,
+                        size: 72,
+                        iconSize: 36,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
                     Text(
                       'Buat akun baru',
                       textAlign: TextAlign.center,

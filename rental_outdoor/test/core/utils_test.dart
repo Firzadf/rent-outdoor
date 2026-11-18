@@ -57,10 +57,13 @@ void main() {
       );
     });
 
-    test('path relatif (reviews[].profile_image) digabung base uploads', () {
+    // Sejak konversi Supabase, path relatif dipetakan ke bucket
+    // equipment-images, bukan lagi ke base uploads backend PHP.
+    test('path relatif (reviews[].profile_image) dipetakan ke bucket Supabase', () {
       expect(
         resolveImageUrl('uploads/profiles/x.jpg'),
-        endsWith('/outdoorrent/uploads/profiles/x.jpg'),
+        'https://mdpmdjmorihsjsdhvsbn.supabase.co'
+        '/storage/v1/object/public/equipment-images/profiles/x.jpg',
       );
       expect(resolveImageUrl(null), '');
       expect(resolveImageUrl('  '), '');

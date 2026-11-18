@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config/constants.dart';
 import '../network/api_exception.dart';
+import '../utils/formatters.dart';
 
 /// Lapisan data Supabase (Auth + PostgREST + Storage).
 ///
@@ -84,6 +85,30 @@ class SupabaseService {
     throw ApiException(
       statusCode: 401,
       message: 'Profil pengguna tidak valid. Silakan login kembali.',
+    );
+  }
+
+  /// Stok tersedia dari fungsi database `public.available_stock`
+  /// (migrasi 20261118000002). Melempar [ApiException] bila fungsi
+  /// belum ada di project (migrasi baru belum dijalankan); pemanggil
+  /// memakai fallback hitungan client dalam kasus itu.
+  Future<int> availableStock({
+    required int equipmentId,
+    required DateTime pickupDate,
+    required DateTime returnDate,
+  }) async {
+    requireConfigured();
+    final result = await guard(
+      () => client.rpc('available_stock', params: {
+        'p_equipment_id': equipmentId,
+        'p_pickup': formatIsoDate(pickupDate),
+        'p_return': formatIsoDate(returnDate),
+      }),
+    );
+    if (result is num) return result.toInt();
+    throw ApiException(
+      statusCode: 0,
+      message: 'Fungsi available_stock mengembalikan nilai tak terduga.',
     );
   }
 

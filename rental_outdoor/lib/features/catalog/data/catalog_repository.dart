@@ -180,6 +180,27 @@ class CatalogRepository {
     final stock = (equipment['stock'] as num? ?? 0).toInt();
     final pickup = formatIsoDate(pickupDate);
     final ret = formatIsoDate(returnDate);
+    // Jalur utama (migrasi 00002): satu angka dari database, sama
+    // dengan yang dipakai trigger validasi stok. Bila fungsi belum
+    // ada (migrasi baru belum dijalankan), jatuh ke hitungan client
+    // di bawah supaya aplikasi tetap jalan.
+    try {
+      final available = await _sb.availableStock(
+        equipmentId: equipmentId,
+        pickupDate: pickupDate,
+        returnDate: returnDate,
+      );
+      final booked = stock - available;
+      return AvailabilityResult(
+        equipmentId: equipmentId,
+        stock: stock,
+        booked: booked,
+        availableStock: available,
+        isAvailable: available > 0,
+      );
+    } on ApiException {
+      // Lanjut ke hitungan client.
+    }
     final items = await _sb.guard(
       () => _sb.client
           .from('booking_items')

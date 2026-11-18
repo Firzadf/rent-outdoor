@@ -13,6 +13,7 @@ import '../data/admin_repository.dart';
 import 'admin_category_form_dialog.dart';
 import 'admin_equipment_form_page.dart';
 import 'admin_providers.dart';
+import '../../../core/widgets/depth.dart';
 
 /// Tab Katalog Admin — kelola alat dan kategori.
 class AdminCatalogPage extends ConsumerStatefulWidget {
@@ -197,7 +198,7 @@ class _AdminCatalogPageState extends ConsumerState<AdminCatalogPage>
 
   Widget _equipmentCard(Equipment equipment) {
     final theme = Theme.of(context);
-    return Card(
+    return DepthCard(
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => _editEquipment(equipment),
@@ -377,7 +378,7 @@ class _AdminCatalogPageState extends ConsumerState<AdminCatalogPage>
 
   Widget _categoryCard(Category category) {
     final theme = Theme.of(context);
-    return Card(
+    return DepthCard(
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: theme.colorScheme.primaryContainer,

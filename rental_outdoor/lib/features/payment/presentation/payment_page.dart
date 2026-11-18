@@ -19,6 +19,7 @@ import '../data/payment_repository.dart';
 import '../domain/payment.dart';
 import '../domain/payment_info.dart';
 import 'payment_providers.dart';
+import '../../../core/widgets/depth.dart';
 
 /// Layar pembayaran satu booking: kode booking, total dari server
 /// (`grand_total`), batas bayar (`auto_cancel_at`) dengan hitung mundur,
@@ -288,7 +289,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
   Widget _statusCard(BuildContext context, Booking booking, bool expired) {
     final theme = Theme.of(context);
 
-    return Card(
+    return DepthCard(
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -393,7 +394,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
   Widget _bankCard(BuildContext context, List<PaymentBankAccount> accounts) {
     final theme = Theme.of(context);
 
-    return Card(
+    return DepthCard(
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -545,7 +546,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
   Widget _statusOnlyCard(BuildContext context, Booking booking, bool expired) {
     final theme = Theme.of(context);
 
-    return Card(
+    return DepthCard(
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -584,7 +585,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
   Widget _formCard(BuildContext context, Booking booking) {
     final theme = Theme.of(context);
 
-    return Card(
+    return DepthCard(
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(16),

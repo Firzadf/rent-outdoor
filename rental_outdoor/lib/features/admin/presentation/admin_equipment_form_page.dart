@@ -10,6 +10,7 @@ import '../../../core/widgets/loading_view.dart';
 import '../../catalog/domain/equipment.dart';
 import '../data/admin_repository.dart';
 import 'admin_providers.dart';
+import '../../../core/widgets/depth.dart';
 
 /// Halaman tambah/ubah alat dengan manajemen gambar.
 ///
@@ -415,7 +416,7 @@ class _AdminEquipmentFormPageState
             maxLines: 3,
           ),
           const SizedBox(height: 16),
-          Card(
+          DepthCard(
             child: Padding(
               padding: const EdgeInsets.all(12),
               child: Row(

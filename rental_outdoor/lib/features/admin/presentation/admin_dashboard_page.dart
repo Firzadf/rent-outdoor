@@ -9,6 +9,7 @@ import '../../../core/widgets/loading_view.dart';
 import '../../booking/domain/booking.dart';
 import '../domain/admin_dashboard.dart';
 import 'admin_providers.dart';
+import '../../../core/widgets/depth.dart';
 
 /// Dashboard admin (`GET /admin/dashboard`): ringkasan angka + alat
 /// terlaris, dengan pull-to-refresh.
@@ -145,7 +146,7 @@ class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage> {
             ),
           )
         else
-          Card(
+          DepthCard(
             margin: EdgeInsets.zero,
             clipBehavior: Clip.antiAlias,
             child: Column(
@@ -266,7 +267,7 @@ class _StatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final content = Card(
+    final content = DepthCard(
       margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
       child: InkWell(

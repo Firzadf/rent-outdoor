@@ -9,6 +9,7 @@ import '../../../core/widgets/loading_view.dart';
 import '../../booking/domain/booking.dart';
 import '../../booking/presentation/booking_status_style.dart';
 import '../../booking/presentation/bookings_provider.dart';
+import '../../../core/widgets/depth.dart';
 
 /// Filter chip daftar pesanan: nilai `status` untuk `GET /bookings`
 /// (`null` = Semua).
@@ -201,7 +202,7 @@ class _OrdersPageState extends ConsumerState<OrdersPage> {
     final theme = Theme.of(context);
     final style = bookingStatusStyle(context, booking.status);
 
-    return Card(
+    return DepthCard(
       margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
       child: InkWell(

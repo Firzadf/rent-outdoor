@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../auth/presentation/auth_controller.dart';
 import 'admin_users_page.dart';
 import 'admin_reports_page.dart';
+import '../../../core/widgets/depth.dart';
 
 /// Tab Lainnya Admin — menu pengguna, laporan, profil, logout.
 class AdminMorePage extends ConsumerWidget {
@@ -22,7 +23,7 @@ class AdminMorePage extends ConsumerWidget {
           padding: const EdgeInsets.all(16),
           children: [
             if (user != null) ...[
-              Card(
+              DepthCard(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
@@ -126,7 +127,7 @@ class AdminMorePage extends ConsumerWidget {
     required VoidCallback onTap,
   }) {
     final theme = Theme.of(context);
-    return Card(
+    return DepthCard(
       clipBehavior: Clip.antiAlias,
       child: ListTile(
         leading: CircleAvatar(
