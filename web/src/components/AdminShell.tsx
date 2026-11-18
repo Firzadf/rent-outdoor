@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth";
+import { LogoMark } from "./LogoMark";
 
 /**
  * Shell admin/moderator: sidebar gelap, jelas beda dari header kaca
@@ -29,9 +30,10 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="app-shell admin-shell">
+    <div className="app-shell">
       <aside className="app-sidebar" aria-label="Navigasi admin">
         <Link href="/admin" className="app-wordmark">
+          <LogoMark size={30} />
           Outdoor<span>Rent</span>
         </Link>
         <p className="app-sidebar-note">

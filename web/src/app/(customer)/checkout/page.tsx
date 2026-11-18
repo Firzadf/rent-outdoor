@@ -73,7 +73,7 @@ export default function CheckoutPage() {
         <p>
           Supabase belum terhubung, jadi pesanan tidak bisa disimpan. Isi{" "}
           <code>NEXT_PUBLIC_SUPABASE_URL</code> dan <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> di{" "}
-          <code>.env.local</code>, lalu jalankan migrasi 20261118000001 dan 20261118000002 di SQL Editor.
+          <code>.env.local</code>.
         </p>
         <Link href="/keranjang" className="btn btn-ghost">Kembali ke Keranjang</Link>
       </div>
@@ -85,9 +85,9 @@ export default function CheckoutPage() {
       <div className="wrap narrow">
         <h1>Profil akun belum terbentuk.</h1>
         <p>
-          Akun login ada, tetapi baris profil di tabel users belum bisa dibuat. Jalankan migrasi{" "}
-          <code>20261118000001_users_insert_policy.sql</code> di SQL Editor Supabase, lalu muat ulang
-          halaman ini. Tanpa profil, pesanan tidak bisa disimpan karena booking butuh user_id.
+          Akun login ada, tetapi baris profil di tabel users belum bisa dibuat.
+          Coba muat ulang halaman ini, atau keluar lalu masuk lagi. Tanpa profil,
+          pesanan tidak bisa disimpan karena booking butuh user_id.
         </p>
         <button type="button" className="btn btn-primary" onClick={() => window.location.reload()}>
           Muat Ulang

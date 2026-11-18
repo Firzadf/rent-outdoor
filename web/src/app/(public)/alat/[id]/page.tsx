@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fetchCatalog, fetchEquipmentDetail } from "@/lib/data";
 import { EquipmentPhoto } from "@/components/EquipmentPhoto";
@@ -17,7 +18,9 @@ export default async function EquipmentDetailPage({ params }: { params: Promise<
   if (!Number.isInteger(equipmentId)) notFound();
   const { equipment, images, reviews } = await fetchEquipmentDetail(equipmentId);
   if (!equipment) notFound();
-  const { categories, equipments } = await fetchCatalog();
+  // images di sini adalah SEMUA gambar katalog, dipakai kartu alat terkait
+  // supaya tiap kartu memakai gambarnya sendiri (dulu: images alat ini).
+  const { categories, equipments, images: allImages } = await fetchCatalog();
   const categoryName = categories.find((c) => c.id === equipment.category_id)?.name ?? "";
   const related = equipments
     .filter((e) => e.category_id === equipment.category_id && e.id !== equipment.id && e.is_active)
@@ -25,25 +28,66 @@ export default async function EquipmentDetailPage({ params }: { params: Promise<
 
   return (
     <div className="wrap">
+      <nav className="crumb" aria-label="Breadcrumb">
+        <Link href="/">Beranda</Link>
+        <span aria-hidden="true">/</span>
+        <Link href="/katalog">Katalog</Link>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">{equipment.name}</span>
+      </nav>
+
+      {/*
+        Detail dua kolom (revisi 18 Nov 2026): galeri kiri sekitar 55
+        persen dengan rasio 4/3 yang dibatasi, info kanan di atas lipatan.
+        Foto tidak lagi di dalam Tilt: tilt membuat media meregang setinggi
+        kolom info yang panjang, sehingga foto memenuhi seluruh viewport.
+      */}
       <div className="detail">
-        <Tilt max={4}>
-          <div className="detail-media">
-            <EquipmentPhoto equipment={equipment} images={images} sizes="(max-width: 900px) 100vw, 55vw" />
-          </div>
-        </Tilt>
+        <div className="detail-media">
+          <EquipmentPhoto equipment={equipment} images={images} sizes="(max-width: 900px) 100vw, 55vw" />
+        </div>
         <div className="detail-info">
           <p style={{ fontWeight: 700, color: "var(--accent)", marginBottom: 8 }}>{categoryName}</p>
           <h1>{equipment.name}</h1>
-          <p className="desc">{equipment.description}</p>
-          <p style={{ marginBottom: 24 }}>
+          <p style={{ marginBottom: 16 }}>
             {equipment.rating_avg > 0
-              ? `Rating ${Number(equipment.rating_avg).toFixed(1)} dari ${equipment.total_reviews} ulasan`
+              ? `★ ${Number(equipment.rating_avg).toFixed(1)} dari ${equipment.total_reviews} ulasan`
               : "Belum ada ulasan"}
             {` · Disewa ${equipment.total_bookings} kali`}
           </p>
+          <p className="desc">{equipment.description}</p>
           <AddToCart equipment={equipment} />
         </div>
       </div>
+
+      <section className="section reveal" style={{ paddingTop: 0 }}>
+        <div className="section-head">
+          <h2>Keterangan sewa.</h2>
+        </div>
+        <div className="steps">
+          <div className="step">
+            <h3>Deposit kembali utuh</h3>
+            <p>
+              Deposit dibayar bersama sewa dan dikembalikan setelah alat
+              kembali dalam kondisi baik dan diperiksa.
+            </p>
+          </div>
+          <div className="step">
+            <h3>Harga dihitung per hari</h3>
+            <p>
+              Sewa dihitung dari harga per hari dikali jumlah hari, dari
+              tanggal ambil sampai tanggal kembali yang dipilih.
+            </p>
+          </div>
+          <div className="step">
+            <h3>Ambil dan kembali</h3>
+            <p>
+              Ambil alat pada tanggal yang dipilih, pakai, lalu kembalikan
+              tepat waktu pada tanggal kembali.
+            </p>
+          </div>
+        </div>
+      </section>
 
       <section className="section reveal" style={{ paddingTop: 0 }}>
         <div className="section-head">
@@ -52,25 +96,17 @@ export default async function EquipmentDetailPage({ params }: { params: Promise<
         {reviews.length === 0 ? (
           <p>Belum ada ulasan untuk alat ini.</p>
         ) : (
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Penyewa</th>
-                  <th>Rating</th>
-                  <th>Ulasan</th>
-                </tr>
-              </thead>
-              <tbody>
-                {reviews.map((r) => (
-                  <tr key={r.id}>
-                    <td>{r.user_name ?? "Penyewa"}</td>
-                    <td>{"★".repeat(r.rating)}</td>
-                    <td>{r.comment ?? "-"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="review-grid">
+            {reviews.map((r) => (
+              <article key={r.id} className="review-card">
+                <strong>{r.user_name ?? "Penyewa"}</strong>
+                <span className="stars" aria-label={`Rating ${r.rating} dari 5`}>
+                  {"★".repeat(r.rating)}
+                  {"☆".repeat(Math.max(0, 5 - r.rating))}
+                </span>
+                <p>{r.comment ?? "-"}</p>
+              </article>
+            ))}
           </div>
         )}
       </section>
@@ -85,7 +121,7 @@ export default async function EquipmentDetailPage({ params }: { params: Promise<
               <Tilt key={eq.id}>
                 <EquipmentCard
                   equipment={eq}
-                  images={images}
+                  images={allImages}
                   categoryName={categoryName}
                 />
               </Tilt>

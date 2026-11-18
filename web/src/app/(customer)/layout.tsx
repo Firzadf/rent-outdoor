@@ -1,7 +1,17 @@
-import { CustomerShell } from "@/components/CustomerShell";
+import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 
-/** Pengalaman customer setelah login: dashboard, pesanan, keranjang,
-    checkout, dan profil di bawah sidebar customer, tanpa hero landing. */
+/**
+ * Halaman customer setelah login memakai layout publik yang sama seperti
+ * pengunjung (pola marketplace): header kaca + footer, tanpa sidebar
+ * dan tanpa dashboard ala admin. Yang beda hanya menu akun di header.
+ */
 export default function CustomerLayout({ children }: { children: React.ReactNode }) {
-  return <CustomerShell>{children}</CustomerShell>;
+  return (
+    <>
+      <SiteHeader />
+      <main>{children}</main>
+      <SiteFooter />
+    </>
+  );
 }

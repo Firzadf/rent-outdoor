@@ -41,7 +41,7 @@ export default function RegisterPage() {
       <h1>Daftar akun baru.</h1>
       <p>
         Satu akun untuk checkout, pesanan, dan bukti bayar. Profil dibuat otomatis
-        di tabel users setelah migrasi 20261118000001 dijalankan.
+        di tabel users setelah akun dibuat.
       </p>
       <form className="form" onSubmit={(e) => void submit(e)}>
         <div>

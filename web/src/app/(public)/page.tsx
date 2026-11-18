@@ -1,13 +1,11 @@
-import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { fetchCatalog } from "@/lib/data";
 import { EquipmentCard } from "@/components/EquipmentCard";
 import { RentalDates } from "@/components/RentalDates";
+import { HeroDepth } from "@/components/HeroDepth";
 import { Tilt } from "@/components/Tilt";
 import { PHOTO_BY_CATEGORY } from "@/lib/seed";
-
-const HERO_WORDS = ["Alat", "outdoor", "siap", "jalan,", "tanpa", "harus", "beli."];
 
 export default async function HomePage() {
   const { categories, equipments, images, isDemo } = await fetchCatalog();
@@ -29,20 +27,25 @@ export default async function HomePage() {
         </div>
       )}
 
+      {/*
+        Hero editorial (revisi 18 Nov 2026): headline display dua baris di
+        atas field datar, foto sebagai bidang dominan di bawahnya, picker
+        tanggal sebagai bar datar yang menumpang di sambungan foto dan
+        ground. Tanpa panel gradien, tanpa chip kaca, tanpa headline
+        kata per kata. Latar 3D ambient (HeroDepth) redup di belakang.
+      */}
       <section className="hero">
-        <div className="hero-copy">
+        <HeroDepth />
+        <div className="wrap hero-top">
           <h1>
-            {HERO_WORDS.map((word, i) => (
-              <span key={i} className="hero-word" style={{ "--i": i } as CSSProperties}>
-                {word}{" "}
-              </span>
-            ))}
+            Sewa alat outdoor,
+            <br />
+            tanpa harus beli.
           </h1>
-          <p>
+          <p className="hero-sub">
             Sewa tenda, carrier, sleeping bag, dan peralatan hiking per hari.
             Ambil, pakai, kembalikan. Deposit kembali utuh bila alat kembali baik.
           </p>
-          <RentalDates />
           <div className="hero-cta">
             <Link href="/katalog" className="btn btn-primary">Lihat Semua Alat</Link>
             <Link href="/daftar" className="btn btn-ghost">Buat Akun</Link>
@@ -54,12 +57,11 @@ export default async function HomePage() {
             alt="Tenda di pegunungan saat matahari terbit"
             fill
             priority
-            sizes="(max-width: 900px) 100vw, 50vw"
+            sizes="100vw"
           />
-          <div className="hero-chips" aria-hidden="true">
-            <span className="hero-chip">{active.length} alat aktif · {categories.length} kategori</span>
-            <span className="hero-chip">Deposit kembali utuh</span>
-          </div>
+        </div>
+        <div className="wrap hero-bar">
+          <RentalDates />
         </div>
       </section>
 
@@ -79,10 +81,11 @@ export default async function HomePage() {
                   src={PHOTO_BY_CATEGORY[cat.id] ?? "/images/hero.jpg"}
                   alt={cat.name}
                   fill
-                  sizes="(max-width: 900px) 50vw, 20vw"
+                  sizes="(max-width: 560px) 50vw, (max-width: 900px) 33vw, 20vw"
                 />
-                <span>
-                  {cat.name} · {catCount(cat.id)} alat
+                <span className="cat-label">
+                  <span className="cat-name">{cat.name}</span>
+                  <span className="cat-count">{catCount(cat.id)} alat</span>
                 </span>
               </Link>
             ))}

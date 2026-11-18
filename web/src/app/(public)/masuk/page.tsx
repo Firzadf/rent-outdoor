@@ -23,8 +23,9 @@ export default function LoginPage() {
       setError(result.error);
       return;
     }
-    // Tujuan setelah login: dashboard customer. Dashboard yang mengarahkan
-    // staf ke /admin, jadi halaman ini tidak perlu menebak peran di sini.
+    // Tujuan setelah login: halaman Akun Saya (/dashboard). Halaman itu
+    // mengarahkan staf ke /admin, jadi halaman ini tidak perlu menebak
+    // peran di sini.
     router.push("/dashboard");
   }
 

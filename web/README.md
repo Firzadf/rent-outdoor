@@ -6,23 +6,27 @@ Satu repo dengan mentahan Flutter (`rental_outdoor/`) dan migrasi Supabase (`sup
 Repo: https://github.com/Firzadf/rent-outdoor
 Supabase: https://mdpmdjmorihsjsdhvsbn.supabase.co
 
-## Halaman: tiga pengalaman yang beda
+## Halaman: pola marketplace
 
-- **Landing publik** `/` (header kaca + footer): hero, picker tanggal sewa,
-  kategori, alat populer, cara sewa. Untuk pengunjung yang belum login.
-  Header publik: pengunjung melihat Masuk dan Daftar, customer melihat
-  Dashboard dan Pesanan Saya, staf melihat Admin.
-- **Customer setelah login** (sidebar forest, tanpa hero landing):
-  `/dashboard` sapaan nama, ringkasan pesanan aktif, aksi cepat, pesanan
-  terbaru; `/pesanan`, `/keranjang`, `/checkout`, `/profil` di bawah
-  layout customer yang sama. Login mengarah ke `/dashboard`, staf
-  diarahkan dari sana ke `/admin`.
+- **Storefront publik** `/` (header kaca + footer): hero, picker tanggal
+  sewa, kategori, alat populer, cara sewa. Customer yang login **tetap
+  melihat storefront yang sama**, tidak ada tampilan dashboard ala admin.
+  Header publik hanya berubah di menu akun: pengunjung melihat Masuk dan
+  Daftar, customer melihat menu "Halo, Nama" berisi Akun Saya, Pesanan
+  Saya, Keranjang dengan jumlah, dan Profil, staf melihat Admin.
+- **Customer setelah login** (layout publik yang sama, tanpa sidebar):
+  `/dashboard` adalah halaman Akun Saya, sapaan nama, tautan cepat biasa,
+  dan pesanan aktif sebagai daftar kartu pesanan biasa, tanpa kotak
+  statistik dan tanpa tabel; `/pesanan`, `/keranjang`, `/checkout`,
+  `/profil` juga di bawah layout publik yang sama. Login mengarah ke
+  `/dashboard`, staf diarahkan dari sana ke `/admin`.
 - **Admin/moderator** `/admin` (sidebar gelap, tab lewat `?tab=`):
   Ringkasan, Booking, Pembayaran, Katalog, Pengguna. Hanya role admin
   dan moderator yang boleh masuk, selain itu diarahkan dengan pesan.
   Moderator boleh melihat dashboard, mengubah status booking, dan
   memverifikasi pembayaran, tetapi tidak boleh mengubah peran pengguna,
   harga, atau stok (dibatasi di UI dan di RLS, migrasi 00003).
+  Sidebar gelap hanya ada di sini, tidak di halaman customer.
 
 ## Bukti bayar
 
@@ -139,3 +143,51 @@ tercakup CSS scroll-driven dan View Transitions tanpa dependensi baru,
 dan hero memakai foto asli, bukan faux UI. Watermelon UI dicek dan
 tidak dipakai: sistem CSS polos proyek ini sudah cukup, menambah
 600 komponen hanya menambah bobot.
+
+## Revisi menyeluruh 18 Nov 2026 (marketplace, hero, kartu, detail, 3D)
+
+- **Pola marketplace (referensi Zalora, dikirim user):** fetch teks
+  Zalora ditolak servernya (HTTP 403), jadi pola yang diterapkan adalah
+  pola marketplace umum yang user minta: header dua baris (logo +
+  pencarian + keranjang + menu akun, lalu strip kategori), kartu seragam,
+  dan harga yang rapi. Tidak ada konten, foto, harga, atau teks Zalora
+  yang disalin. Customer yang login tetap melihat storefront yang sama,
+  hanya menu akunnya berubah.
+- **Hero dan tipografi:** Fraunces (display serif editorial) untuk h1
+  dan h2, Archivo (grotesque) untuk body, lewat `next/font` tanpa
+  dependensi tambahan. Headline dua baris "Sewa alat outdoor, tanpa
+  harus beli." di atas field datar, foto sebagai bidang dominan
+  (52vh, maks 560px), picker tanggal sebagai bar datar yang menumpang
+  di sambungan foto dan ground. Panel gradien, chip kaca, dan animasi
+  kata per kata dihapus. Referensi tipografi: Typewolf
+  (typewolf.com/recommendations, daftar font 2026).
+- **Kartu seragam:** kartu kategori rasio 4/5 tetap di semua breakpoint
+  (5 kolom desktop, 3 di 900px, 2 di 560px), label dua baris tetap
+  (nama satu baris ellipsis + jumlah alat). Kartu alat: judul clamp
+  2 baris dengan tinggi minimum, meta satu baris ellipsis, harga,
+  deposit, dan chip stok sejajar, tombol menempel di bawah kartu.
+- **Detail /alat/[id]:** dua kolom 7fr/6fr, foto rasio 4/3 yang dibatasi
+  (penyebab foto raksasa: Tilt membuat media meregang setinggi kolom
+  info yang panjang, Tilt dihapus dari media detail), breadcrumb,
+  ulasan sebagai kartu (bukan tabel), alat terkait memakai gambarnya
+  sendiri (dulu memakai gambar alat yang dibuka), keterangan sewa
+  dari aturan proyek (deposit kembali, harga per hari, ambil-kembali).
+- **Animasi 3D:** latar ambient hero (`HeroDepth`, lima bentuk redup
+  melayang dengan kedalaman + kemiringan mengikuti pointer, hanya
+  transform dan opacity, dua bentuk di layar kecil) dan layar loading
+  3D saat pertama buka (`IntroLoader`, mark berputar masuk dan huruf
+  merangkai, sekitar 1,6 detik, sekali per sesi tab, klik untuk
+  lewati). Loading screen adalah momen 3D utama, latar hero dibuat
+  tenang. Semua mati di `prefers-reduced-motion`. Tanpa Three.js.
+- **Logo dan favicon:** mark lingkaran forest + gunung putih +
+  matahari oranye (`components/LogoMark.tsx`), dipakai di header
+  publik, sidebar admin, dan loading screen. Favicon di `public/`:
+  `favicon.ico` (16/32/48), `icon-192.png`, `icon-512.png`,
+  `apple-touch-icon.png`, plus `src/app/icon.svg`. Mark dicek
+  terbaca di 16px (gunung 63 piksel, matahari 8 piksel).
+- **Audit:** semua halaman dibaca ulang (landing, katalog, detail,
+  keranjang, checkout, pesanan, profil, masuk, daftar, admin semua
+  tab, dashboard Akun Saya, header, footer). Yang diperbaiki di luar
+  laporan user: teks kedaluwarsa soal migrasi 00001/00002 di checkout,
+  daftar, dan profil (migrasi sudah live), dan `.main-nav` CSS mati
+  setelah header diganti strip kategori.

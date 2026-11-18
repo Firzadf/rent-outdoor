@@ -43,7 +43,7 @@ export default function ProfilePage() {
     setError("");
     setMessage("");
     if (!appUser) {
-      setError("Profil belum terbentuk. Jalankan migrasi 20261118000001 di SQL Editor, lalu muat ulang.");
+      setError("Profil belum terbentuk. Coba muat ulang halaman ini.");
       return;
     }
     setSaving(true);
@@ -68,7 +68,7 @@ export default function ProfilePage() {
       </p>
       {!appUser && (
         <p className="form-error">
-          Profil belum terbentuk. Jalankan migrasi 20261118000001_users_insert_policy.sql di SQL Editor.
+          Profil belum terbentuk. Coba muat ulang halaman ini.
         </p>
       )}
       <div className="form">

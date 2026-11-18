@@ -22,7 +22,7 @@ export function CatalogClient({
   const end = params.get("end") ?? "";
   const days = start && end ? rentalDays(start, end) : null;
 
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(params.get("q") ?? "");
   const [category, setCategory] = useState(initialCategory);
   const [sort, setSort] = useState("populer");
 

@@ -5,23 +5,22 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { getBrowserClient } from "@/lib/supabase";
-import { BOOKING_STATUS_LABEL, type Booking, type Payment } from "@/lib/types";
+import { BOOKING_STATUS_LABEL, type Booking } from "@/lib/types";
 import { formatDate, formatRupiah } from "@/lib/format";
 
 const ACTIVE_STATUSES: Booking["status"][] = ["pending_payment", "pending_verification", "confirmed", "in_use"];
 
-type BookingWithPayment = Booking & { payments?: Payment[] };
-
 /**
- * Dashboard customer: sapaan nama, ringkasan pesanan aktif, aksi cepat,
- * dan pesanan terbaru. Sengaja beda dari landing: tanpa hero foto,
- * tanpa kategori dan alat populer, fokus ke pesanan milik sendiri.
- * Staf diarahkan ke /admin, pengunjung ke /masuk.
+ * Akun Saya: halaman akun customer dalam layout publik yang sama seperti
+ * landing, bukan dashboard ala admin. Sapaan nama, tautan cepat biasa,
+ * dan pesanan aktif sebagai daftar kartu pesanan biasa. Tanpa kotak
+ * statistik dan tanpa tabel. Login mengarah ke sini, staf diarahkan
+ * ke /admin, pengunjung ke /masuk.
  */
-export default function DashboardPage() {
+export default function AccountPage() {
   const router = useRouter();
   const { user, appUser, loading } = useAuth();
-  const [bookings, setBookings] = useState<BookingWithPayment[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [loadError, setLoadError] = useState("");
 
@@ -30,8 +29,6 @@ export default function DashboardPage() {
   const load = useCallback(async () => {
     if (!appUser) return;
     const supabase = getBrowserClient();
-    // Query polos tanpa embed join: embed pernah gagal diam-diam di admin
-    // dan menampilkan angka 0. Pembayaran digabung di client.
     const { data, error } = await supabase
       .from("bookings")
       .select("*")
@@ -41,25 +38,7 @@ export default function DashboardPage() {
       setLoadError(error.message);
       return;
     }
-    const rows = (data ?? []) as Booking[];
-    if (rows.length > 0) {
-      const { data: pays } = await supabase
-        .from("payments")
-        .select("*")
-        .in(
-          "booking_id",
-          rows.map((b) => b.id),
-        );
-      const byBooking = new Map<number, Payment[]>();
-      for (const p of (pays ?? []) as Payment[]) {
-        const list = byBooking.get(p.booking_id) ?? [];
-        list.push(p);
-        byBooking.set(p.booking_id, list);
-      }
-      setBookings(rows.map((b) => ({ ...b, payments: byBooking.get(b.id) ?? [] })));
-    } else {
-      setBookings([]);
-    }
+    setBookings((data ?? []) as Booking[]);
     setLoaded(true);
   }, [appUser]);
 
@@ -79,78 +58,54 @@ export default function DashboardPage() {
   if (loading || !user || isStaff) {
     return (
       <div className="wrap empty">
-        <p>Memuat dashboard.</p>
+        <p>Memuat akun saya.</p>
       </div>
     );
   }
 
+  const name = appUser?.name ?? user.email?.split("@")[0] ?? "Penyewa";
   const active = bookings.filter((b) => ACTIVE_STATUSES.includes(b.status));
-  const waitingPayment = bookings.filter((b) => b.status === "pending_payment").length;
-  const completed = bookings.filter((b) => b.status === "completed");
-  const spent = completed.reduce((n, b) => n + Number(b.grand_total), 0);
-  const nextPickup = active
-    .map((b) => b.pickup_date)
-    .sort()
-    .at(0);
-  const recent = bookings.slice(0, 4);
 
   return (
-    <div className="dash">
-      <section className="dash-hero">
-        <p className="dash-eyebrow">Dashboard customer</p>
-        <h1>Halo, {appUser?.name ?? user.email?.split("@")[0] ?? "Penyewa"}.</h1>
+    <div className="wrap account">
+      <section>
+        <h1>Halo, {name}.</h1>
         <p>
           {active.length > 0
-            ? `Kamu punya ${active.length} pesanan aktif${nextPickup ? `, pengambilan terdekat ${formatDate(nextPickup)}` : ""}.`
+            ? `Kamu punya ${active.length} pesanan aktif.`
             : "Belum ada pesanan aktif. Pilih alat dan mulai sewa pertamamu."}
         </p>
       </section>
 
       {loadError && <p className="form-error">Gagal memuat pesanan: {loadError}</p>}
 
-      <div className="stat-grid dash-stats">
-        <div className="stat">
-          <strong>{active.length}</strong>
-          <span>Pesanan aktif</span>
-        </div>
-        <div className="stat">
-          <strong>{waitingPayment}</strong>
-          <span>Menunggu pembayaran</span>
-        </div>
-        <div className="stat">
-          <strong>{completed.length}</strong>
-          <span>Pesanan selesai</span>
-        </div>
-        <div className="stat">
-          <strong>{formatRupiah(spent)}</strong>
-          <span>Total sewa selesai</span>
-        </div>
-      </div>
-
-      <div className="dash-actions">
+      <div className="account-actions">
         <Link href="/katalog" className="btn btn-primary">
           Lanjut Sewa
         </Link>
         <Link href="/pesanan" className="btn btn-ghost">
-          Unggah Bukti Bayar
+          Pesanan Saya
         </Link>
         <Link href="/keranjang" className="btn btn-ghost">
-          Lihat Keranjang
+          Keranjang
+        </Link>
+        <Link href="/profil" className="btn btn-ghost">
+          Profil
         </Link>
       </div>
 
       <section>
         <div className="section-head">
-          <h2>Pesanan terbaru.</h2>
+          <h2>Pesanan aktif.</h2>
           <Link href="/pesanan">Lihat semua pesanan</Link>
         </div>
         {!loaded ? (
           <p style={{ color: "var(--ink-soft)" }}>Memuat pesanan.</p>
-        ) : recent.length === 0 ? (
+        ) : active.length === 0 ? (
           <div className="card">
             <div className="card-body">
               <p style={{ color: "var(--ink-soft)" }}>
-                Belum ada pesanan. Buka katalog, pilih alat, lalu checkout.
+                Belum ada pesanan aktif. Buka katalog, pilih alat, lalu checkout.
               </p>
               <Link href="/katalog" className="btn btn-primary">
                 Buka Katalog
@@ -158,33 +113,31 @@ export default function DashboardPage() {
             </div>
           </div>
         ) : (
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Kode</th>
-                  <th>Tanggal</th>
-                  <th>Total</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recent.map((b) => (
-                  <tr key={b.id}>
-                    <td>
-                      <Link href="/pesanan">{b.booking_code}</Link>
-                    </td>
-                    <td>
-                      {formatDate(b.pickup_date)} s.d. {formatDate(b.return_date)}
-                    </td>
-                    <td>{formatRupiah(Number(b.grand_total))}</td>
-                    <td>
-                      <span className={`status status-${b.status}`}>{BOOKING_STATUS_LABEL[b.status]}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="account-orders">
+            {active.map((b) => (
+              <article key={b.id} className="card">
+                <div className="card-body">
+                  <div className="order-head">
+                    <strong>{b.booking_code}</strong>
+                    <span className={`status status-${b.status}`}>{BOOKING_STATUS_LABEL[b.status]}</span>
+                  </div>
+                  <p>
+                    {formatDate(b.pickup_date)} s.d. {formatDate(b.return_date)}
+                  </p>
+                  <p>
+                    <strong>{formatRupiah(Number(b.grand_total))}</strong>
+                  </p>
+                  {b.status === "pending_payment" && (
+                    <p style={{ color: "var(--ink-soft)" }}>
+                      Menunggu pembayaran, unggah bukti di halaman Pesanan Saya.
+                    </p>
+                  )}
+                  <Link href="/pesanan" className="btn btn-ghost">
+                    Lihat pesanan
+                  </Link>
+                </div>
+              </article>
+            ))}
           </div>
         )}
       </section>
