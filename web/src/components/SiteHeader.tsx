@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { useCart } from "@/lib/cart";
 import { getBrowserClient } from "@/lib/supabase";
@@ -23,6 +23,7 @@ export function SiteHeader() {
   const { count } = useCart();
   const pathname = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -39,10 +40,13 @@ export function SiteHeader() {
   }, []);
 
   // Menu akun menutup sendiri saat halaman berpindah.
+  // activeCat ikut query kategori, bukan hanya pathname: pindah antar
+  // kategori di /katalog tidak mengubah pathname, jadi tanpa
+  // searchParams di dependensi, pill yang tersorot tidak pernah berubah.
   useEffect(() => {
     setMenuOpen(false);
-    setActiveCat(new URLSearchParams(window.location.search).get("kategori") ?? "semua");
-  }, [pathname]);
+    setActiveCat(searchParams.get("kategori") ?? "semua");
+  }, [pathname, searchParams]);
 
   // Strip kategori memakai data live, jatuh ke seed bila gagal.
   useEffect(() => {

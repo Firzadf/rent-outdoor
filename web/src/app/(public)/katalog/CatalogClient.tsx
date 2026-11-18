@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { EquipmentCard } from "@/components/EquipmentCard";
 import { Tilt } from "@/components/Tilt";
 import { rentalDays } from "@/lib/format";
@@ -17,6 +17,8 @@ export function CatalogClient({
   images: EquipmentImage[];
 }) {
   const params = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const initialCategory = params.get("kategori") ?? "semua";
   const start = params.get("start") ?? "";
   const end = params.get("end") ?? "";
@@ -25,6 +27,25 @@ export function CatalogClient({
   const [query, setQuery] = useState(params.get("q") ?? "");
   const [category, setCategory] = useState(initialCategory);
   const [sort, setSort] = useState("populer");
+
+  // State harus mengikuti URL: navigasi client-side antar kategori di
+  // /katalog tidak me-remount komponen ini, jadi useState(initial)
+  // saja membuat grid macet di kategori pertama yang dipilih.
+  useEffect(() => {
+    setCategory(params.get("kategori") ?? "semua");
+    setQuery(params.get("q") ?? "");
+  }, [params]);
+
+  // Dropdown juga menulis ke URL, supaya pill aktif di header ikut
+  // berubah saat kategori diganti dari halaman katalog.
+  function changeCategory(value: string) {
+    setCategory(value);
+    const next = new URLSearchParams(params.toString());
+    if (value === "semua") next.delete("kategori");
+    else next.set("kategori", value);
+    const qs = next.toString();
+    router.push(qs ? `${pathname}?${qs}` : pathname);
+  }
 
   const filtered = useMemo(() => {
     let list = equipments.filter((e) => e.is_active);
@@ -62,7 +83,7 @@ export function CatalogClient({
         </div>
         <div>
           <label htmlFor="kategori">Kategori</label>
-          <select id="kategori" value={category} onChange={(e) => setCategory(e.target.value)}>
+          <select id="kategori" value={category} onChange={(e) => changeCategory(e.target.value)}>
             <option value="semua">Semua kategori</option>
             {categories.map((c) => (
               <option key={c.id} value={c.id}>{c.name}</option>
